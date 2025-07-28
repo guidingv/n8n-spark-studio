@@ -171,20 +171,22 @@ const ContentCalendar = () => {
               <h3 className="text-lg font-semibold mb-4">Upcoming</h3>
               <div className="space-y-4">
                 {calendarEvents.slice(0, 3).map((event) => (
-                  <div key={event.id} className="bg-white/5 border border-border/10 rounded-lg p-3">
-                    <div className="flex items-start justify-between mb-2">
-                      <h4 className="font-medium text-sm">{event.title}</h4>
+                  <div key={event.id} className="bg-white/5 border border-border/10 rounded-lg p-4 hover:bg-white/10 transition-colors">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-sm mb-1 truncate">{event.title}</h4>
+                        <div className="flex items-center text-xs text-muted-foreground mb-1">
+                          <Clock className="w-3 h-3 mr-1 shrink-0" />
+                          <span>{event.date} at {event.time}</span>
+                        </div>
+                        <div className="flex items-center text-xs text-muted-foreground">
+                          <Users className="w-3 h-3 mr-1 shrink-0" />
+                          <span>{event.assignee}</span>
+                        </div>
+                      </div>
                       <Badge className={getStatusColor(event.status)}>
                         {event.status}
                       </Badge>
-                    </div>
-                    <div className="flex items-center text-xs text-muted-foreground mb-2">
-                      <Clock className="w-3 h-3 mr-1" />
-                      {event.date} at {event.time}
-                    </div>
-                    <div className="flex items-center text-xs text-muted-foreground">
-                      <Users className="w-3 h-3 mr-1" />
-                      {event.assignee}
                     </div>
                   </div>
                 ))}
