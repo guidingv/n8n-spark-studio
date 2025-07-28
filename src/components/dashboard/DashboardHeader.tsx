@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Settings, Zap, MessageSquare } from "lucide-react";
+import { Settings, Zap, MessageSquare, Calendar, FolderOpen, Home } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 
 export const DashboardHeader = () => {
   const [isConnected, setIsConnected] = useState(true);
+  const location = useLocation();
 
   return (
     <div className="flex flex-col lg:flex-row lg:items-center justify-between p-4 lg:p-6 bg-gradient-glass backdrop-blur-xl border-b border-border/10 gap-4">
@@ -19,6 +21,40 @@ export const DashboardHeader = () => {
             </h1>
             <p className="text-xs lg:text-sm text-muted-foreground">Marketing Content Dashboard</p>
           </div>
+        </div>
+        
+        {/* Navigation */}
+        <div className="hidden md:flex items-center space-x-1">
+          <Link to="/">
+            <Button 
+              variant={location.pathname === "/" ? "secondary" : "ghost"} 
+              size="sm"
+              className="flex items-center space-x-2"
+            >
+              <Home className="w-4 h-4" />
+              <span>Dashboard</span>
+            </Button>
+          </Link>
+          <Link to="/calendar">
+            <Button 
+              variant={location.pathname === "/calendar" ? "secondary" : "ghost"} 
+              size="sm"
+              className="flex items-center space-x-2"
+            >
+              <Calendar className="w-4 h-4" />
+              <span>Calendar</span>
+            </Button>
+          </Link>
+          <Link to="/assets">
+            <Button 
+              variant={location.pathname === "/assets" ? "secondary" : "ghost"} 
+              size="sm"
+              className="flex items-center space-x-2"
+            >
+              <FolderOpen className="w-4 h-4" />
+              <span>Assets</span>
+            </Button>
+          </Link>
         </div>
       </div>
       
