@@ -15,7 +15,7 @@ export const DashboardHeader = () => {
           </div>
           <div>
             <h1 className="text-lg lg:text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-              n8n Spark Studio
+              Marketinghub
             </h1>
             <p className="text-xs lg:text-sm text-muted-foreground">Marketing Content Dashboard</p>
           </div>
@@ -28,7 +28,7 @@ export const DashboardHeader = () => {
           className={`${isConnected ? 'bg-n8n-secondary/20 text-n8n-secondary border-n8n-secondary/30' : ''}`}
         >
           <div className={`w-2 h-2 rounded-full mr-2 ${isConnected ? 'bg-n8n-secondary' : 'bg-destructive'}`} />
-          {isConnected ? "n8n Connected" : "n8n Disconnected"}
+          {isConnected ? "Database Connected" : "Database Disconnected"}
         </Badge>
         
         <Button variant="outline" size="sm" className="border-border/30 hover:bg-white/5 shrink-0">

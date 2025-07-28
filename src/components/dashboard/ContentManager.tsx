@@ -9,7 +9,7 @@ const contentAssets = [
     id: 1,
     title: "Spring Campaign Hero Image",
     type: "image",
-    source: "n8n Flow: Image Generator",
+    source: "DB Query: Image Generator",
     status: "ready",
     lastSync: "5 minutes ago",
     thumbnail: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=300&fit=crop"
@@ -18,7 +18,7 @@ const contentAssets = [
     id: 2,
     title: "Product Description Copy",
     type: "text",
-    source: "n8n Flow: Content Writer",
+    source: "DB Query: Content Writer",
     status: "processing",
     lastSync: "12 minutes ago",
     preview: "Discover our latest innovation that transforms the way you work. With cutting-edge technology and intuitive design..."
@@ -27,7 +27,7 @@ const contentAssets = [
     id: 3,
     title: "Social Media Templates",
     type: "image",
-    source: "n8n Flow: Template Generator",
+    source: "DB Query: Template Generator",
     status: "ready",
     lastSync: "1 hour ago",
     thumbnail: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=300&fit=crop"
@@ -36,7 +36,7 @@ const contentAssets = [
     id: 4,
     title: "Email Newsletter Content",
     type: "text",
-    source: "n8n Flow: Newsletter AI",
+    source: "DB Query: Newsletter AI",
     status: "ready",
     lastSync: "2 hours ago",
     preview: "This week in tech: Breakthrough innovations that are reshaping industries and creating new opportunities..."
@@ -67,7 +67,7 @@ export const ContentManager = () => {
           <Database className="w-6 h-6 text-n8n-secondary" />
           <h2 className="text-xl font-semibold text-foreground">Content Manager</h2>
           <Badge className="bg-n8n-primary/20 text-n8n-primary border-n8n-primary/30">
-            n8n Connected
+            Database Connected
           </Badge>
         </div>
         
@@ -79,7 +79,7 @@ export const ContentManager = () => {
           disabled={isRefreshing}
         >
           <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-          Sync n8n Flows
+          Sync Database
         </Button>
       </div>
 
@@ -130,11 +130,11 @@ export const ContentManager = () => {
       <div className="mt-6 p-4 bg-gradient-to-r from-n8n-primary/10 to-n8n-secondary/10 border border-n8n-primary/20 rounded-xl">
         <div className="flex items-center justify-between">
           <div>
-            <h4 className="font-medium text-foreground mb-1">n8n Integration Status</h4>
-            <p className="text-sm text-muted-foreground">4 active workflows • Last execution: 3 minutes ago</p>
+            <h4 className="font-medium text-foreground mb-1">Database Integration Status</h4>
+            <p className="text-sm text-muted-foreground">4 active queries • Last sync: 3 minutes ago</p>
           </div>
           <Button variant="outline" size="sm" className="border-n8n-primary/30 hover:bg-n8n-primary/5">
-            Configure Flows
+            Configure Database
           </Button>
         </div>
       </div>

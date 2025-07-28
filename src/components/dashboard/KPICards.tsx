@@ -13,7 +13,7 @@ const kpiData = [
   {
     title: "Images Generated",
     value: "156",
-    subtitle: "Via n8n flows",
+    subtitle: "Via database",
     icon: ImageIcon,
     trend: "+8%",
     color: "text-n8n-secondary"
