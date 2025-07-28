@@ -20,6 +20,7 @@ import {
   Trash2,
   Star
 } from "lucide-react";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 
 const assets = [
   {
@@ -128,8 +129,10 @@ const AssetHub = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+      <DashboardHeader />
+      
       <div className="max-w-7xl mx-auto p-4 lg:p-6">
-        {/* Header */}
+        {/* Page Title */}
         <div className="mb-6">
           <div className="flex items-center space-x-3 mb-2">
             <FolderOpen className="w-8 h-8 text-primary" />
