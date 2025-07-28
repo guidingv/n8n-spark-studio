@@ -19,11 +19,11 @@ const kpiData = [
     color: "text-n8n-secondary"
   },
   {
-    title: "Engagement Rate",
-    value: "4.2%",
-    subtitle: "Average",
+    title: "Assets Created",
+    value: "342",
+    subtitle: "Total library",
     icon: TrendingUp,
-    trend: "+15%",
+    trend: "+18%",
     color: "text-n8n-accent"
   },
   {
