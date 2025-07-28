@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Settings, Zap, MessageSquare, Calendar, FolderOpen, Home } from "lucide-react";
+import { Settings, Zap, MessageSquare, Calendar, FolderOpen, Home, Sparkles } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 export const DashboardHeader = () => {
@@ -43,6 +43,16 @@ export const DashboardHeader = () => {
             >
               <Calendar className="w-4 h-4" />
               <span>Calendar</span>
+            </Button>
+          </Link>
+          <Link to="/create">
+            <Button 
+              variant={location.pathname === "/create" ? "secondary" : "ghost"} 
+              size="sm"
+              className="flex items-center space-x-2"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>Create</span>
             </Button>
           </Link>
           <Link to="/assets">
