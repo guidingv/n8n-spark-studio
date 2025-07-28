@@ -60,7 +60,7 @@ export const ChatAgent = () => {
           <span className="text-sm font-medium text-foreground">Quick Suggestions</span>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-2">
           {chatSuggestions.map((suggestion, index) => (
             <Button
               key={index}
