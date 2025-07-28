@@ -83,7 +83,7 @@ export const ContentManager = () => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {contentAssets.map((asset) => (
           <div key={asset.id} className="bg-gradient-to-br from-white/5 to-white/[0.02] border border-border/20 rounded-xl p-4 hover:shadow-glass transition-all duration-300">
             <div className="flex items-start justify-between mb-3">
@@ -113,14 +113,14 @@ export const ContentManager = () => {
               </div>
             )}
 
-            <div className="flex space-x-2">
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
               <Button variant="outline" size="sm" className="border-border/30 hover:bg-white/5 flex-1">
-                <Eye className="w-3 h-3 mr-2" />
-                Preview
+                <Eye className="w-3 h-3 sm:mr-2" />
+                <span className="hidden sm:inline">Preview</span>
               </Button>
               <Button variant="outline" size="sm" className="border-border/30 hover:bg-white/5 flex-1">
-                <Download className="w-3 h-3 mr-2" />
-                Download
+                <Download className="w-3 h-3 sm:mr-2" />
+                <span className="hidden sm:inline">Download</span>
               </Button>
             </div>
           </div>

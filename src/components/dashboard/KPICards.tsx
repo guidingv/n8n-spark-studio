@@ -38,7 +38,7 @@ const kpiData = [
 
 export const KPICards = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 p-4 lg:p-6">
       {kpiData.map((kpi, index) => (
         <Card key={index} className="p-6 bg-gradient-glass backdrop-blur-xl border-border/10 hover:shadow-glass transition-all duration-300 hover:scale-105">
           <div className="flex items-center justify-between mb-4">

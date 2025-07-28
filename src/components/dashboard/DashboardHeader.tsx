@@ -7,22 +7,22 @@ export const DashboardHeader = () => {
   const [isConnected, setIsConnected] = useState(true);
 
   return (
-    <div className="flex items-center justify-between p-6 bg-gradient-glass backdrop-blur-xl border-b border-border/10">
-      <div className="flex items-center space-x-4">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-glow">
-            <Zap className="w-5 h-5 text-white" />
+    <div className="flex flex-col lg:flex-row lg:items-center justify-between p-4 lg:p-6 bg-gradient-glass backdrop-blur-xl border-b border-border/10 gap-4">
+      <div className="flex items-center space-x-3 lg:space-x-4">
+        <div className="flex items-center space-x-2 lg:space-x-3">
+          <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-glow">
+            <Zap className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+            <h1 className="text-lg lg:text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
               n8n Spark Studio
             </h1>
-            <p className="text-sm text-muted-foreground">Marketing Content Dashboard</p>
+            <p className="text-xs lg:text-sm text-muted-foreground">Marketing Content Dashboard</p>
           </div>
         </div>
       </div>
       
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-2 lg:space-x-4 justify-start lg:justify-end overflow-x-auto">
         <Badge 
           variant={isConnected ? "default" : "destructive"}
           className={`${isConnected ? 'bg-n8n-secondary/20 text-n8n-secondary border-n8n-secondary/30' : ''}`}
@@ -31,12 +31,12 @@ export const DashboardHeader = () => {
           {isConnected ? "n8n Connected" : "n8n Disconnected"}
         </Badge>
         
-        <Button variant="outline" size="sm" className="border-border/30 hover:bg-white/5">
-          <MessageSquare className="w-4 h-4 mr-2" />
-          Chat Agent
+        <Button variant="outline" size="sm" className="border-border/30 hover:bg-white/5 shrink-0">
+          <MessageSquare className="w-4 h-4 lg:mr-2" />
+          <span className="hidden lg:inline">Chat Agent</span>
         </Button>
         
-        <Button variant="outline" size="sm" className="border-border/30 hover:bg-white/5">
+        <Button variant="outline" size="sm" className="border-border/30 hover:bg-white/5 shrink-0">
           <Settings className="w-4 h-4" />
         </Button>
       </div>

@@ -12,13 +12,13 @@ const Index = () => {
       <main className="max-w-7xl mx-auto">
         <KPICards />
         
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 px-6 pb-6">
-          <div className="xl:col-span-2 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 px-4 lg:px-6 pb-6">
+          <div className="lg:col-span-2 space-y-4 lg:space-y-6">
             <ContentCalendar />
             <ContentManager />
           </div>
           
-          <div className="xl:col-span-1">
+          <div className="lg:col-span-1">
             <ChatAgent />
           </div>
         </div>
