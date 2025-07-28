@@ -127,17 +127,6 @@ export const ContentManager = () => {
         ))}
       </div>
 
-      <div className="mt-6 p-4 bg-gradient-to-r from-n8n-primary/10 to-n8n-secondary/10 border border-n8n-primary/20 rounded-xl">
-        <div className="flex items-center justify-between">
-          <div>
-            <h4 className="font-medium text-foreground mb-1">Database Integration Status</h4>
-            <p className="text-sm text-muted-foreground">4 active queries • Last sync: 3 minutes ago</p>
-          </div>
-          <Button variant="outline" size="sm" className="border-n8n-primary/30 hover:bg-n8n-primary/5">
-            Configure Database
-          </Button>
-        </div>
-      </div>
     </Card>
   );
 };
