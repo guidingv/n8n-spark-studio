@@ -20,9 +20,11 @@ import {
   Edit,
   Trash2,
   Star,
-  ArrowLeft
+  ArrowLeft,
+  Sparkles
 } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { CreateAssetDialog } from "@/components/assets/CreateAssetDialog";
 
 const assets = [
   {
@@ -122,6 +124,7 @@ const AssetHub = () => {
   const [viewMode, setViewMode] = useState("grid");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("all");
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   const filteredAssets = assets.filter(asset => {
     const matchesSearch = asset.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -205,7 +208,12 @@ const AssetHub = () => {
                 </Button>
               </div>
 
-              <Button>
+              <Button onClick={() => setShowCreateDialog(true)}>
+                <Sparkles className="w-4 h-4 mr-2" />
+                Create Asset
+              </Button>
+              
+              <Button variant="outline">
                 <Upload className="w-4 h-4 mr-2" />
                 Upload
               </Button>
@@ -337,6 +345,11 @@ const AssetHub = () => {
             <span>Total storage: 57.2 MB used</span>
           </div>
         </Card>
+        
+        <CreateAssetDialog 
+          open={showCreateDialog} 
+          onOpenChange={setShowCreateDialog} 
+        />
       </div>
     </div>
   );
