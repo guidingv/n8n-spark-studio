@@ -85,7 +85,6 @@ export const ContentManager = () => {
           variant="outline" 
           size="sm" 
           onClick={handleRefresh}
-          className="border-border/30 hover:bg-white/5"
           disabled={isRefreshing}
         >
           <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -127,13 +126,13 @@ export const ContentManager = () => {
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="border-border/30 hover:bg-white/10 hover:text-white hover:border-white/20 flex-1"
+                className="flex-1"
                 onClick={() => navigate(`/editor/${asset.id}`)}
               >
                 <Eye className="w-3 h-3 sm:mr-2" />
                 <span className="hidden sm:inline">Preview</span>
               </Button>
-              <Button variant="outline" size="sm" className="border-border/30 hover:bg-white/10 hover:text-white hover:border-white/20 flex-1">
+              <Button variant="outline" size="sm" className="flex-1">
                 <Download className="w-3 h-3 sm:mr-2" />
                 <span className="hidden sm:inline">Download</span>
               </Button>
