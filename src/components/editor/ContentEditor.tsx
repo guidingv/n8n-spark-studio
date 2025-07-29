@@ -1,20 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import EditorJS from "@editorjs/editorjs";
-import Header from "@editorjs/header";
-import List from "@editorjs/list";
-import Paragraph from "@editorjs/paragraph";
-import Image from "@editorjs/image";
-import Code from "@editorjs/code";
-import Quote from "@editorjs/quote";
-import Delimiter from "@editorjs/delimiter";
-import Table from "@editorjs/table";
-import LinkTool from "@editorjs/link";
-import Marker from "@editorjs/marker";
-import InlineCode from "@editorjs/inline-code";
+import { useEffect, useState, useMemo } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Save, Eye, Edit3, Type, Image as ImageIcon, List as ListIcon, Code2, Quote as QuoteIcon, Minus, Table as TableIcon, Link, Highlighter } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Save, Eye, Edit3, FileText, Settings } from "lucide-react";
 import { toast } from "sonner";
 
 interface ContentEditorProps {
@@ -24,165 +15,91 @@ interface ContentEditorProps {
 }
 
 export const ContentEditor = ({ initialData, onSave, readOnly = false }: ContentEditorProps) => {
-  const editorRef = useRef<EditorJS | null>(null);
-  const [isReady, setIsReady] = useState(false);
+  const [content, setContent] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [wordCount, setWordCount] = useState(0);
+  const [view, setView] = useState<"edit" | "preview">(readOnly ? "preview" : "edit");
 
+  // Initialize content from props
   useEffect(() => {
-    if (!editorRef.current) {
-      const editor = new EditorJS({
-        holder: "editorjs",
-        readOnly,
-        tools: {
-          header: {
-            class: Header,
-            config: {
-              placeholder: "Enter a header",
-              levels: [1, 2, 3, 4, 5, 6],
-              defaultLevel: 2,
-            },
-          },
-          paragraph: {
-            class: Paragraph,
-            inlineToolbar: true,
-            config: {
-              placeholder: "Type your text here...",
-            },
-          },
-          list: {
-            class: List,
-            inlineToolbar: true,
-            config: {
-              defaultStyle: "unordered",
-            },
-          },
-          code: {
-            class: Code,
-            config: {
-              placeholder: "Enter code here...",
-            },
-          },
-          quote: {
-            class: Quote,
-            inlineToolbar: true,
-            config: {
-              quotePlaceholder: "Enter a quote",
-              captionPlaceholder: "Quote's author",
-            },
-          },
-          delimiter: Delimiter,
-          linkTool: {
-            class: LinkTool,
-            config: {
-              endpoint: "/api/link", // Mock endpoint for link fetching
-            },
-          },
-          marker: {
-            class: Marker,
-          },
-          inlineCode: {
-            class: InlineCode,
-          },
-          image: {
-            class: Image,
-            config: {
-              endpoints: {
-                byFile: "/api/uploadFile", // Mock endpoint
-                byUrl: "/api/fetchUrl", // Mock endpoint
-              },
-              additionalRequestData: {},
-              additionalRequestHeaders: {},
-              field: "image",
-              types: "image/*",
-              captionPlaceholder: "Image caption",
-              buttonContent: "Select an image",
-              uploader: {
-                uploadByFile: (file: File) => {
-                  // Mock upload - in real app, upload to your storage
-                  return Promise.resolve({
-                    success: 1,
-                    file: {
-                      url: URL.createObjectURL(file),
-                    },
-                  });
-                },
-              },
-            },
-          },
-        },
-        data: initialData || {
-          blocks: [
-            {
-              type: "header",
-              data: {
-                text: "Content Editor",
-                level: 1,
-              },
-            },
-            {
-              type: "paragraph",
-              data: {
-                text: "Start editing your content here...",
-              },
-            },
-          ],
-        },
-        placeholder: "Let's write an awesome story!",
-        onReady: () => {
-          setIsReady(true);
-          updateWordCount();
-        },
-        onChange: () => {
-          updateWordCount();
-        },
-      });
-
-      editorRef.current = editor;
-    }
-
-    return () => {
-      if (editorRef.current && editorRef.current.destroy) {
-        editorRef.current.destroy();
-        editorRef.current = null;
-      }
-    };
-  }, [initialData, readOnly]);
-
-  const updateWordCount = async () => {
-    if (!editorRef.current || !isReady) return;
-    
-    try {
-      const data = await editorRef.current.save();
-      let words = 0;
-      data.blocks.forEach((block: any) => {
-        if (block.type === "paragraph" || block.type === "header") {
-          const text = block.data.text || "";
-          words += text.split(/\s+/).filter((word: string) => word.length > 0).length;
-        } else if (block.type === "list") {
-          block.data.items?.forEach((item: string) => {
-            words += item.split(/\s+/).filter((word: string) => word.length > 0).length;
-          });
-        } else if (block.type === "quote") {
-          const text = block.data.text || "";
-          const caption = block.data.caption || "";
-          words += text.split(/\s+/).filter((word: string) => word.length > 0).length;
-          words += caption.split(/\s+/).filter((word: string) => word.length > 0).length;
+    if (initialData?.content) {
+      setContent(initialData.content);
+    } else if (initialData?.blocks) {
+      // Convert EditorJS blocks to HTML for compatibility
+      let htmlContent = "";
+      initialData.blocks.forEach((block: any) => {
+        switch (block.type) {
+          case "header":
+            htmlContent += `<h${block.data.level || 2}>${block.data.text || ""}</h${block.data.level || 2}>`;
+            break;
+          case "paragraph":
+            htmlContent += `<p>${block.data.text || ""}</p>`;
+            break;
+          case "list":
+            const listType = block.data.style === "ordered" ? "ol" : "ul";
+            htmlContent += `<${listType}>`;
+            block.data.items?.forEach((item: string) => {
+              htmlContent += `<li>${item}</li>`;
+            });
+            htmlContent += `</${listType}>`;
+            break;
+          default:
+            if (block.data.text) {
+              htmlContent += `<p>${block.data.text}</p>`;
+            }
         }
       });
-      setWordCount(words);
-    } catch (error) {
-      console.error("Word count failed:", error);
+      setContent(htmlContent);
     }
-  };
+  }, [initialData]);
+
+  // Count words
+  useEffect(() => {
+    const text = content.replace(/<[^>]*>/g, "").trim();
+    const words = text ? text.split(/\s+/).length : 0;
+    setWordCount(words);
+  }, [content]);
+
+  // Quill modules configuration
+  const modules = useMemo(() => ({
+    toolbar: {
+      container: [
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'script': 'sub'}, { 'script': 'super' }],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
+        [{ 'align': [] }],
+        ['blockquote', 'code-block'],
+        ['link', 'image', 'video'],
+        ['clean']
+      ],
+    },
+    clipboard: {
+      matchVisual: false,
+    },
+  }), []);
+
+  const formats = [
+    'header', 'font', 'size',
+    'bold', 'italic', 'underline', 'strike', 'blockquote',
+    'list', 'bullet', 'indent',
+    'link', 'image', 'video',
+    'color', 'background',
+    'align', 'script',
+    'code-block'
+  ];
 
   const handleSave = async () => {
-    if (!editorRef.current || !isReady) return;
-
     setIsSaving(true);
     try {
-      const outputData = await editorRef.current.save();
-      onSave?.(outputData);
+      const saveData = {
+        content: content,
+        wordCount: wordCount,
+        lastModified: new Date().toISOString(),
+      };
+      onSave?.(saveData);
       toast.success("Content saved successfully!");
     } catch (error) {
       console.error("Save failed:", error);
@@ -192,28 +109,22 @@ export const ContentEditor = ({ initialData, onSave, readOnly = false }: Content
     }
   };
 
-  const toolsInfo = [
-    { icon: Type, name: "Headers", description: "Add headers (H1-H6)" },
-    { icon: ImageIcon, name: "Images", description: "Upload or embed images" },
-    { icon: ListIcon, name: "Lists", description: "Bullet and numbered lists" },
-    { icon: Code2, name: "Code", description: "Code blocks with syntax highlighting" },
-    { icon: QuoteIcon, name: "Quotes", description: "Blockquotes with attribution" },
-    { icon: Minus, name: "Delimiter", description: "Visual content separator" },
-    { icon: Link, name: "Links", description: "Smart link embedding" },
-    { icon: Highlighter, name: "Highlight", description: "Text highlighting and inline code" },
-  ];
+  const quillStyle = {
+    height: readOnly || view === "preview" ? "auto" : "400px",
+    background: "transparent",
+  };
 
   return (
     <div className="max-w-5xl mx-auto space-y-4">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          {readOnly ? (
+          {view === "preview" ? (
             <Eye className="h-5 w-5 text-muted-foreground" />
           ) : (
             <Edit3 className="h-5 w-5 text-muted-foreground" />
           )}
           <h2 className="text-lg font-semibold">
-            {readOnly ? "Content Preview" : "Rich Content Editor"}
+            Rich Text Editor
           </h2>
           {wordCount > 0 && (
             <Badge variant="secondary" className="ml-2">
@@ -222,41 +133,68 @@ export const ContentEditor = ({ initialData, onSave, readOnly = false }: Content
           )}
         </div>
         
-        {!readOnly && (
-          <Button 
-            onClick={handleSave} 
-            disabled={!isReady || isSaving}
-            className="flex items-center gap-2"
-          >
-            <Save className="h-4 w-4" />
-            {isSaving ? "Saving..." : "Save Content"}
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+          {!readOnly && (
+            <Tabs value={view} onValueChange={(v) => setView(v as "edit" | "preview")}>
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="edit" className="flex items-center gap-2">
+                  <Edit3 className="h-4 w-4" />
+                  Edit
+                </TabsTrigger>
+                <TabsTrigger value="preview" className="flex items-center gap-2">
+                  <Eye className="h-4 w-4" />
+                  Preview
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          )}
+          
+          {!readOnly && (
+            <Button 
+              onClick={handleSave} 
+              disabled={isSaving}
+              className="flex items-center gap-2"
+            >
+              <Save className="h-4 w-4" />
+              {isSaving ? "Saving..." : "Save"}
+            </Button>
+          )}
+        </div>
       </div>
 
-      {!readOnly && (
+      <Card className="overflow-hidden bg-gradient-glass backdrop-blur-xl border-border/10">
+        {view === "edit" && !readOnly ? (
+          <div className="[&_.ql-toolbar]:border-b [&_.ql-toolbar]:border-border/20 [&_.ql-toolbar]:bg-white/5 [&_.ql-container]:border-0 [&_.ql-editor]:min-h-[400px] [&_.ql-editor]:text-foreground [&_.ql-editor]:bg-transparent [&_.ql-snow_.ql-picker]:text-foreground [&_.ql-snow_.ql-stroke]:stroke-current [&_.ql-snow_.ql-fill]:fill-current">
+            <ReactQuill
+              theme="snow"
+              value={content}
+              onChange={setContent}
+              modules={modules}
+              formats={formats}
+              placeholder="Start writing your content here..."
+              style={quillStyle}
+            />
+          </div>
+        ) : (
+          <div className="p-6">
+            <div 
+              className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-em:text-foreground prose-code:text-foreground prose-pre:bg-muted prose-pre:text-foreground prose-blockquote:text-foreground prose-blockquote:border-l-primary prose-a:text-primary prose-ul:text-foreground prose-ol:text-foreground prose-li:text-foreground"
+              dangerouslySetInnerHTML={{ __html: content || "<p>No content yet. Click Edit to start writing.</p>" }}
+            />
+          </div>
+        )}
+      </Card>
+
+      {view === "edit" && !readOnly && (
         <Card className="p-4 bg-gradient-glass backdrop-blur-xl border-border/10">
-          <h3 className="text-sm font-medium mb-3 text-foreground">Available Tools</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2">
-            {toolsInfo.map((tool, index) => (
-              <div 
-                key={index}
-                className="flex flex-col items-center p-2 rounded-lg bg-white/5 border border-border/20 hover:bg-white/10 transition-colors"
-              >
-                <tool.icon className="h-4 w-4 text-n8n-primary mb-1" />
-                <span className="text-xs text-foreground font-medium">{tool.name}</span>
-              </div>
-            ))}
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <FileText className="h-4 w-4" />
+            <span>
+              WordPress-style editor with rich formatting options. Use the toolbar above for formatting.
+            </span>
           </div>
         </Card>
       )}
-
-      <Card className="p-6 bg-gradient-glass backdrop-blur-xl border-border/10">
-        <div 
-          id="editorjs" 
-          className="min-h-[500px] prose prose-lg max-w-none focus:outline-none prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-em:text-foreground prose-code:text-foreground prose-pre:bg-muted prose-pre:text-foreground prose-blockquote:text-foreground prose-blockquote:border-l-primary"
-        />
-      </Card>
     </div>
   );
 };
