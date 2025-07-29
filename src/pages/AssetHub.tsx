@@ -265,14 +265,14 @@ const AssetHub = () => {
                     
                     <div className="flex flex-wrap gap-1 mb-3">
                       {asset.tags.slice(0, 2).map((tag) => (
-                        <span key={tag} className="text-xs bg-muted px-2 py-1 rounded">
+                        <Badge key={tag} variant="secondary" className="text-xs">
                           {tag}
-                        </span>
+                        </Badge>
                       ))}
                       {asset.tags.length > 2 && (
-                        <span className="text-xs text-muted-foreground">
+                        <Badge variant="outline" className="text-xs">
                           +{asset.tags.length - 2}
-                        </span>
+                        </Badge>
                       )}
                     </div>
                     
