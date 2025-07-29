@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import ContentCalendar from "./pages/ContentCalendar";
+import ContentPlanning from "./pages/ContentPlanning";
 import AssetHub from "./pages/AssetHub";
 import CreateCampaign from "./pages/CreateCampaign";
 import ContentEditor from "./pages/ContentEditor";
@@ -23,6 +24,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/calendar" element={<ContentCalendar />} />
+            <Route path="/planning" element={<ContentPlanning />} />
             <Route path="/assets" element={<AssetHub />} />
             <Route path="/create" element={<CreateCampaign />} />
             <Route path="/editor/:id?" element={<ContentEditor />} />
