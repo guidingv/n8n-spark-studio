@@ -12,6 +12,7 @@ const mockContent = {
     id: "1",
     title: "Blog Post: Summer Campaign Launch",
     type: "blog",
+    strategyId: "1",
     blocks: [
       {
         type: "header",
@@ -51,6 +52,7 @@ const mockContent = {
     id: "2",
     title: "Social Media Post: Product Announcement",
     type: "social",
+    strategyId: "3",
     blocks: [
       {
         type: "header",
@@ -73,9 +75,9 @@ export default function ContentEditorPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [isReadOnly, setIsReadOnly] = useState(false);
-  const [selectedStrategy, setSelectedStrategy] = useState<string>("");
   
   const content = id ? mockContent[id as keyof typeof mockContent] : null;
+  const [selectedStrategy, setSelectedStrategy] = useState<string>(content?.strategyId || "");
 
   const handleSave = (data: any) => {
     console.log("Saving content:", data);
