@@ -77,12 +77,12 @@ export const DashboardHeader = () => {
           {isConnected ? "Database Connected" : "Database Disconnected"}
         </Badge>
         
-        <Button variant="outline" size="sm" className="border-border/30 hover:bg-white/5 shrink-0">
+        <Button variant="outline" size="sm" className="border-border/30 hover:bg-white/10 hover:text-white hover:border-white/20 shrink-0">
           <MessageSquare className="w-4 h-4 lg:mr-2" />
           <span className="hidden lg:inline">Chat Agent</span>
         </Button>
         
-        <Button variant="outline" size="sm" className="border-border/30 hover:bg-white/5 shrink-0">
+        <Button variant="outline" size="sm" className="border-border/30 hover:bg-white/10 hover:text-white hover:border-white/20 shrink-0">
           <Settings className="w-4 h-4" />
         </Button>
       </div>
