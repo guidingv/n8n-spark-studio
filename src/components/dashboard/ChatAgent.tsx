@@ -66,7 +66,7 @@ export const ChatAgent = () => {
               key={index}
               variant="outline"
               size="sm"
-              className="justify-start text-left border-border/30 hover:bg-white/5 text-sm"
+              className="justify-start text-left border-border/30 hover:bg-white/10 hover:text-white hover:border-white/20 text-sm"
               onClick={() => setMessage(suggestion)}
             >
               <Lightbulb className="w-3 h-3 mr-2 text-n8n-accent" />
