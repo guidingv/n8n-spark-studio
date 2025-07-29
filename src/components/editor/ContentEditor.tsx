@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Save, Eye, Edit3, FileText, Settings } from "lucide-react";
 import { toast } from "sonner";
+import { BiasCheck } from "./BiasCheck";
 
 interface ContentEditorProps {
   initialData?: any;
@@ -185,6 +186,11 @@ export const ContentEditor = ({ initialData, onSave, readOnly = false }: Content
         )}
       </Card>
 
+      {/* Bias Check Component */}
+      <BiasCheck 
+        content={content} 
+        isAnalyzing={view === "edit" && content.length > 0}
+      />
     </div>
   );
 };
