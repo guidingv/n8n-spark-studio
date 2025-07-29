@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ContentEditor } from "@/components/editor/ContentEditor";
+import { StrategyPack } from "@/components/editor/StrategyPack";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, FileText } from "lucide-react";
 import { toast } from "sonner";
@@ -72,6 +73,7 @@ export default function ContentEditorPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [isReadOnly, setIsReadOnly] = useState(false);
+  const [selectedStrategy, setSelectedStrategy] = useState<string>("");
   
   const content = id ? mockContent[id as keyof typeof mockContent] : null;
 
@@ -144,6 +146,11 @@ export default function ContentEditorPage() {
             <p className="text-muted-foreground capitalize">{content.type} Content</p>
           </div>
         )}
+
+        <StrategyPack 
+          selectedStrategy={selectedStrategy}
+          onStrategyChange={setSelectedStrategy}
+        />
 
         <ContentEditor
           initialData={content ? { blocks: content.blocks } : undefined}
