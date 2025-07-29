@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Plus, Edit, Trash2, Clock, Users } from "lucide-react";
+import { Calendar, Plus, Edit, Trash2, Clock, Users, ArrowLeft } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 
 const calendarEvents = [
@@ -68,6 +69,7 @@ const getTypeColor = (type: string) => {
 };
 
 const ContentCalendar = () => {
+  const navigate = useNavigate();
   const [selectedView, setSelectedView] = useState("month");
 
   return (
@@ -75,6 +77,16 @@ const ContentCalendar = () => {
       <DashboardHeader />
       
       <div className="max-w-7xl mx-auto p-4 lg:p-6">
+        {/* Back Button */}
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/")}
+          className="mb-4 flex items-center gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Dashboard
+        </Button>
+
         {/* Page Title */}
         <div className="mb-6">
           <div className="flex items-center space-x-3 mb-2">

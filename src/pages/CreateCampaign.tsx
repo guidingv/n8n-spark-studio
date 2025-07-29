@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +16,8 @@ import {
   FileText,
   Download,
   Save,
-  Wand2
+  Wand2,
+  ArrowLeft
 } from "lucide-react";
 
 interface Message {
@@ -35,6 +37,7 @@ interface GeneratedAsset {
 }
 
 const CreateCampaign = () => {
+  const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
@@ -176,6 +179,16 @@ const CreateCampaign = () => {
       <DashboardHeader />
       
       <div className="max-w-6xl mx-auto p-4 lg:p-6">
+        {/* Back Button */}
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/")}
+          className="mb-4 flex items-center gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Dashboard
+        </Button>
+
         {/* Page Header */}
         <div className="mb-6">
           <div className="flex items-center space-x-3 mb-2">
