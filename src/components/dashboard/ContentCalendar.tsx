@@ -1,8 +1,9 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { Calendar, ChevronLeft, ChevronRight, Plus, ExternalLink } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const contentData = [
   {
@@ -50,6 +51,7 @@ const getStatusColor = (status: string) => {
 
 export const ContentCalendar = () => {
   const [currentMonth, setCurrentMonth] = useState("January 2024");
+  const navigate = useNavigate();
 
   return (
     <Card className="p-6 bg-gradient-glass backdrop-blur-xl border-border/10">
@@ -57,6 +59,14 @@ export const ContentCalendar = () => {
         <div className="flex items-center space-x-3">
           <Calendar className="w-6 h-6 text-n8n-primary" />
           <h2 className="text-xl font-semibold text-foreground">Content Calendar</h2>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => navigate('/calendar')}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <ExternalLink className="w-4 h-4" />
+          </Button>
         </div>
         
         <div className="flex items-center space-x-4">
@@ -70,16 +80,32 @@ export const ContentCalendar = () => {
             </Button>
           </div>
           
-          <Button className="bg-gradient-primary hover:opacity-90">
-            <Plus className="w-4 h-4 mr-2" />
-            Add Content
-          </Button>
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/create')}
+              className="border-n8n-primary/30 text-n8n-primary hover:bg-n8n-primary/10"
+            >
+              Plan Content
+            </Button>
+            <Button 
+              onClick={() => navigate('/create')} 
+              className="bg-gradient-primary hover:opacity-90"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Content
+            </Button>
+          </div>
         </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {contentData.map((content) => (
-          <div key={content.id} className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-white/5 to-white/[0.02] border border-border/20 hover:shadow-glass transition-all duration-300 hover:scale-105">
+          <div 
+            key={content.id} 
+            className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-white/5 to-white/[0.02] border border-border/20 hover:shadow-glass transition-all duration-300 hover:scale-105 cursor-pointer"
+            onClick={() => navigate(`/editor/${content.id}`)}
+          >
             <div className="aspect-video relative overflow-hidden">
               <img 
                 src={content.image} 

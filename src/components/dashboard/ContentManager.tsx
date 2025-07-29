@@ -1,8 +1,9 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Database, RefreshCw, Download, Eye } from "lucide-react";
+import { Database, RefreshCw, Download, Eye, ExternalLink } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const contentAssets = [
   {
@@ -54,6 +55,7 @@ const getStatusColor = (status: string) => {
 
 export const ContentManager = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const navigate = useNavigate();
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -69,6 +71,14 @@ export const ContentManager = () => {
           <Badge className="bg-n8n-primary/20 text-n8n-primary border-n8n-primary/30">
             Database Connected
           </Badge>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => navigate('/assets')}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <ExternalLink className="w-4 h-4" />
+          </Button>
         </div>
         
         <Button 
@@ -114,7 +124,12 @@ export const ContentManager = () => {
             )}
 
             <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-              <Button variant="outline" size="sm" className="border-border/30 hover:bg-white/5 flex-1">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="border-border/30 hover:bg-white/5 flex-1"
+                onClick={() => navigate(`/editor/${asset.id}`)}
+              >
                 <Eye className="w-3 h-3 sm:mr-2" />
                 <span className="hidden sm:inline">Preview</span>
               </Button>
