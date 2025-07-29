@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Plus, Edit, Trash2, Clock, Users, ArrowLeft } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { DayDetailModal } from "@/components/calendar/DayDetailModal";
 
 const calendarEvents = [
   {
@@ -71,6 +72,20 @@ const getTypeColor = (type: string) => {
 const ContentCalendar = () => {
   const navigate = useNavigate();
   const [selectedView, setSelectedView] = useState("month");
+  const [selectedDate, setSelectedDate] = useState("");
+  const [showDayDetail, setShowDayDetail] = useState(false);
+
+  const handleDayClick = (day: number) => {
+    if (day > 0 && day <= 31) {
+      const dateString = `2024-03-${day.toString().padStart(2, '0')}`;
+      setSelectedDate(dateString);
+      setShowDayDetail(true);
+    }
+  };
+
+  const getEventsForDate = (date: string) => {
+    return calendarEvents.filter(event => event.date === date);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
@@ -155,6 +170,7 @@ const ContentCalendar = () => {
                   return (
                     <div
                       key={i}
+                      onClick={() => handleDayClick(day)}
                       className={`
                         min-h-[80px] p-2 border border-border/10 rounded-lg
                         ${isCurrentMonth ? 'bg-white/5 hover:bg-white/10' : 'bg-muted/20'}
@@ -247,6 +263,13 @@ const ContentCalendar = () => {
             ))}
           </div>
         </Card>
+        
+        <DayDetailModal
+          open={showDayDetail}
+          onOpenChange={setShowDayDetail}
+          selectedDate={selectedDate}
+          events={getEventsForDate(selectedDate)}
+        />
       </div>
     </div>
   );
