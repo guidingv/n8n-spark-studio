@@ -185,16 +185,6 @@ export const ContentEditor = ({ initialData, onSave, readOnly = false }: Content
         )}
       </Card>
 
-      {view === "edit" && !readOnly && (
-        <Card className="p-4 bg-gradient-glass backdrop-blur-xl border-border/10">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <FileText className="h-4 w-4" />
-            <span>
-              WordPress-style editor with rich formatting options. Use the toolbar above for formatting.
-            </span>
-          </div>
-        </Card>
-      )}
     </div>
   );
 };
