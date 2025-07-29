@@ -82,7 +82,7 @@ export default function ContentEditorPage() {
   };
 
   const handleBack = () => {
-    navigate(-1);
+    navigate("/");
   };
 
   if (id && !content) {
