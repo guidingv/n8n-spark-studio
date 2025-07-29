@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import ContentCalendar from "./pages/ContentCalendar";
 import AssetHub from "./pages/AssetHub";
 import CreateCampaign from "./pages/CreateCampaign";
+import ContentEditor from "./pages/ContentEditor";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ function App() {
             <Route path="/calendar" element={<ContentCalendar />} />
             <Route path="/assets" element={<AssetHub />} />
             <Route path="/create" element={<CreateCampaign />} />
+            <Route path="/editor/:id?" element={<ContentEditor />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
