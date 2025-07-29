@@ -191,7 +191,7 @@ const AssetHub = () => {
               
               <div className="flex items-center border border-border/20 rounded-md">
                 <Button
-                  variant={viewMode === "grid" ? "default" : "ghost"}
+                  variant={viewMode === "grid" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setViewMode("grid")}
                   className="rounded-r-none"
@@ -199,7 +199,7 @@ const AssetHub = () => {
                   <Grid3X3 className="w-4 h-4" />
                 </Button>
                 <Button
-                  variant={viewMode === "list" ? "default" : "ghost"}
+                  variant={viewMode === "list" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setViewMode("list")}
                   className="rounded-l-none"
@@ -235,13 +235,13 @@ const AssetHub = () => {
                       className="w-full h-48 object-cover"
                     />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-2">
-                      <Button variant="secondary" size="sm">
+                      <Button variant="outline" size="sm">
                         <Eye className="w-4 h-4" />
                       </Button>
-                      <Button variant="secondary" size="sm">
+                      <Button variant="outline" size="sm">
                         <Download className="w-4 h-4" />
                       </Button>
-                      <Button variant="secondary" size="sm">
+                      <Button variant="outline" size="sm">
                         <Edit className="w-4 h-4" />
                       </Button>
                     </div>
