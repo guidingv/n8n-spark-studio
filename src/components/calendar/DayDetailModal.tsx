@@ -56,6 +56,11 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
     onOpenChange(false);
   };
 
+  const handleViewDetails = (eventId: number) => {
+    navigate(`/editor/${eventId}?mode=preview`);
+    onOpenChange(false);
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { 
@@ -132,7 +137,7 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
                     <Button 
                       variant="outline" 
                       size="sm"
-                      onClick={() => handleEditContent(event.id)}
+                      onClick={() => handleViewDetails(event.id)}
                     >
                       <Eye className="w-3 h-3 mr-2" />
                       View Details

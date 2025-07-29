@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ContentEditor } from "@/components/editor/ContentEditor";
 import { StrategyPack } from "@/components/editor/StrategyPack";
 import { Button } from "@/components/ui/button";
@@ -74,10 +74,17 @@ const mockContent = {
 export default function ContentEditorPage() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [isReadOnly, setIsReadOnly] = useState(false);
+  const [searchParams] = useSearchParams();
+  const [isReadOnly, setIsReadOnly] = useState(searchParams.get('mode') === 'preview');
   
   const content = id ? mockContent[id as keyof typeof mockContent] : null;
   const [selectedStrategy, setSelectedStrategy] = useState<string>(content?.strategyId || "");
+
+  useEffect(() => {
+    if (searchParams.get('mode') === 'preview') {
+      setIsReadOnly(true);
+    }
+  }, [searchParams]);
 
   const handleSave = (data: any) => {
     console.log("Saving content:", data);
