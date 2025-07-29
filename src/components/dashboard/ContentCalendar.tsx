@@ -83,10 +83,10 @@ export const ContentCalendar = () => {
           <div className="flex space-x-2">
             <Button 
               variant="outline" 
-              onClick={() => navigate('/create')}
+              onClick={() => navigate('/calendar')}
               className="border-n8n-primary/30 text-n8n-primary hover:bg-n8n-primary/10"
             >
-              Plan Content
+              View Calendar
             </Button>
             <Button 
               onClick={() => navigate('/create')} 
