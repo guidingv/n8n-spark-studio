@@ -120,12 +120,6 @@ const Index = () => {
               <p className="text-muted-foreground mt-1">{currentProject.description}</p>
             </div>
             <div className="flex gap-3">
-              <Button asChild variant="outline" className="gap-2">
-                <Link to="/projects">
-                  <Target className="h-4 w-4" />
-                  Switch Project
-                </Link>
-              </Button>
               <Button asChild className="gap-2">
                 <Link to="/editor">
                   <Edit3 className="h-4 w-4" />
@@ -166,7 +160,7 @@ const Index = () => {
                     </div>
                   </div>
                   <Badge variant={isStrategyComplete ? "default" : "secondary"} className="text-xs">
-                    {isStrategyComplete ? '100%' : '60%'}
+                    {isStrategyComplete ? 'Complete' : 'Draft'}
                   </Badge>
                 </div>
                 

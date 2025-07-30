@@ -70,16 +70,6 @@ export function ProjectHeader() {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="text-right">
-              <div className="text-sm font-medium">{currentProject.progress}% Complete</div>
-              <div className="w-32 bg-muted rounded-full h-2 mt-1">
-                <div 
-                  className="bg-primary h-2 rounded-full transition-all duration-300" 
-                  style={{ width: `${currentProject.progress}%` }}
-                />
-              </div>
-            </div>
-            
             <Button variant="outline" size="sm" className="gap-2">
               <Settings className="h-4 w-4" />
               Settings
