@@ -396,18 +396,6 @@ const CreateCampaign = () => {
           </Tabs>
         </Card>
 
-        {/* Project Name Input */}
-        <Card className="p-3 lg:p-4 mb-4 lg:mb-6 bg-gradient-glass backdrop-blur-xl border-border/10">
-          <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-            <label className="text-sm font-medium whitespace-nowrap">Project Name:</label>
-            <Input
-              value={projectName}
-              onChange={(e) => setProjectName(e.target.value)}
-              placeholder={`Enter your ${activeTab} name...`}
-              className="flex-1"
-            />
-          </div>
-        </Card>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
           {/* Chat Interface */}
