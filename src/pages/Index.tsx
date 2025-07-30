@@ -160,7 +160,7 @@ const Index = () => {
                     </div>
                   </div>
                   <Badge variant={isStrategyComplete ? "default" : "secondary"} className="text-xs">
-                    {isStrategyComplete ? 'Complete' : 'Draft'}
+                    {isStrategyComplete ? 'Enter' : 'Enter'}
                   </Badge>
                 </div>
                 
