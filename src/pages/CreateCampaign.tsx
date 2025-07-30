@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { useStrategy } from "@/hooks/useStrategy";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Sparkles, 
   Send, 
@@ -22,7 +23,10 @@ import {
   ArrowLeft,
   Zap,
   Target,
-  PenTool
+  PenTool,
+  CheckCircle,
+  Eye,
+  ExternalLink
 } from "lucide-react";
 
 interface Message {
@@ -45,6 +49,7 @@ type CreationType = "campaign" | "brief" | "post" | "series";
 
 const CreateCampaign = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const { getAIContext, isStrategyComplete } = useStrategy();
   const [activeTab, setActiveTab] = useState<CreationType>("campaign");
   const [messages, setMessages] = useState<Message[]>([
@@ -58,6 +63,7 @@ const CreateCampaign = () => {
   const [inputValue, setInputValue] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [projectName, setProjectName] = useState("");
+  const [savedAssets, setSavedAssets] = useState<GeneratedAsset[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   function getWelcomeMessage(type: CreationType): string {
@@ -243,10 +249,31 @@ const CreateCampaign = () => {
   };
 
   const saveAsset = (asset: GeneratedAsset) => {
-    // Here you would integrate with your data management system
-    console.log("Saving asset:", asset);
-    // For now, just show a success message
-    alert(`${asset.title} saved successfully!`);
+    // Add to saved assets
+    setSavedAssets(prev => [...prev, asset]);
+    
+    // Show success notification
+    toast({
+      title: "Content Saved Successfully!",
+      description: `${asset.title} has been saved to your ${getAssetDestination(asset.type)}.`,
+      action: asset.type === "brief" ? (
+        <Button variant="outline" size="sm" onClick={() => navigate("/planning")}>
+          <ExternalLink className="w-3 h-3 mr-1" />
+          View
+        </Button>
+      ) : undefined,
+    });
+  };
+
+  const getAssetDestination = (type: string) => {
+    switch (type) {
+      case "brief": return "content planning";
+      case "campaign": return "campaign library";
+      case "image": return "asset hub";
+      case "text": return "content library";
+      case "calendar": return "content calendar";
+      default: return "project";
+    }
   };
 
   const getQuickStartExamples = () => {
@@ -464,7 +491,7 @@ const CreateCampaign = () => {
                                   
                                   <div className="flex space-x-2">
                                     <Button size="sm" variant="outline" className="text-xs">
-                                      <Download className="w-3 h-3 mr-1" />
+                                      <Eye className="w-3 h-3 mr-1" />
                                       Preview
                                     </Button>
                                     <Button 
@@ -575,6 +602,43 @@ const CreateCampaign = () => {
                   <p><span className="font-medium">Brand:</span> {getAIContext().brand?.name}</p>
                   <p><span className="font-medium">Tone:</span> {getAIContext().brand?.tone}</p>
                   <p><span className="font-medium">Audience:</span> {getAIContext().audience?.name}</p>
+                </div>
+              </Card>
+            )}
+            
+            {/* Saved Content Summary */}
+            {savedAssets.length > 0 && (
+              <Card className="p-3 lg:p-4 bg-gradient-glass backdrop-blur-xl border-border/10">
+                <div className="flex items-center space-x-2 mb-3">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <h3 className="font-semibold text-green-500 text-sm lg:text-base">
+                    Content Saved ({savedAssets.length})
+                  </h3>
+                </div>
+                <div className="space-y-2 max-h-32 overflow-y-auto">
+                  {savedAssets.map((asset, index) => (
+                    <div key={index} className="flex items-center justify-between text-xs p-2 bg-black/10 rounded border border-border/10">
+                      <div className="flex items-center space-x-2 flex-1 min-w-0">
+                        {React.createElement(getAssetIcon(asset.type), { className: "w-3 h-3 text-primary flex-shrink-0" })}
+                        <span className="truncate">{asset.title}</span>
+                      </div>
+                      {asset.type === "brief" && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-6 px-2 text-xs"
+                          onClick={() => navigate("/planning")}
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3 pt-2 border-t border-border/10">
+                  <p className="text-xs text-muted-foreground">
+                    Your content has been saved. Visit the respective sections to view and manage your creations.
+                  </p>
                 </div>
               </Card>
             )}
