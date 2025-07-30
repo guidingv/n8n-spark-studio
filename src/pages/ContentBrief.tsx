@@ -179,6 +179,12 @@ const ContentBrief = () => {
     { value: "approved", label: "Approved", color: "bg-green-500/20 text-green-500 border-green-500/30" }
   ];
 
+  const priorityOptions = [
+    { value: "low", label: "Low", color: "bg-green-500/20 text-green-500 border-green-500/30" },
+    { value: "medium", label: "Medium", color: "bg-yellow-500/20 text-yellow-500 border-yellow-500/30" },
+    { value: "high", label: "High", color: "bg-red-500/20 text-red-500 border-red-500/30" }
+  ];
+
   const handleStatusChange = (newStatus: string) => {
     if (briefData) {
       setBriefData({ ...briefData, status: newStatus });
@@ -186,6 +192,17 @@ const ContentBrief = () => {
       toast({
         title: "Status Updated",
         description: `Brief status changed to ${statusLabel}`,
+      });
+    }
+  };
+
+  const handlePriorityChange = (newPriority: string) => {
+    if (briefData) {
+      setBriefData({ ...briefData, priority: newPriority });
+      const priorityLabel = priorityOptions.find(p => p.value === newPriority)?.label || newPriority;
+      toast({
+        title: "Priority Updated",
+        description: `Brief priority changed to ${priorityLabel}`,
       });
     }
   };
@@ -295,9 +312,26 @@ const ContentBrief = () => {
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <Badge className={getPriorityColor(briefData.priority)}>
-                  {briefData.priority} priority
-                </Badge>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Badge className={`${getPriorityColor(briefData.priority)} cursor-pointer hover:opacity-80 transition-opacity`}>
+                      {briefData.priority} priority
+                      <ChevronDown className="w-3 h-3 ml-1" />
+                    </Badge>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="z-50 bg-background border-border shadow-lg" align="end">
+                    {priorityOptions.map((option) => (
+                      <DropdownMenuItem
+                        key={option.value}
+                        onClick={() => handlePriorityChange(option.value)}
+                        className="cursor-pointer"
+                      >
+                        <span className={`w-2 h-2 rounded-full mr-2 ${option.color.split(' ')[0]}`} />
+                        {option.label}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
 
