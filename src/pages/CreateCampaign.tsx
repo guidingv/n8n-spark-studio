@@ -330,34 +330,39 @@ const CreateCampaign = () => {
         </Button>
 
         {/* Page Header */}
-        <div className="mb-6">
-          <div className="flex items-center space-x-3 mb-2">
-            <Sparkles className="w-8 h-8 text-primary" />
-            <h1 className="text-2xl lg:text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+        <div className="mb-4 lg:mb-6">
+          <div className="flex items-center space-x-2 lg:space-x-3 mb-2">
+            <Sparkles className="w-6 h-6 lg:w-8 lg:h-8 text-primary flex-shrink-0" />
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
               AI Content Creator
             </h1>
           </div>
-          <p className="text-muted-foreground">Create campaigns, briefs, posts, and content series with AI {isStrategyComplete && "using your brand strategy"}</p>
+          <p className="text-sm lg:text-base text-muted-foreground">
+            Create campaigns, briefs, posts, and content series with AI {isStrategyComplete && (
+              <span className="hidden sm:inline">using your brand strategy</span>
+            )}
+          </p>
         </div>
 
         {/* Content Type Tabs */}
-        <Card className="p-4 mb-6 bg-gradient-glass backdrop-blur-xl border-border/10">
+        <Card className="p-3 lg:p-4 mb-4 lg:mb-6 bg-gradient-glass backdrop-blur-xl border-border/10">
           <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
             <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="campaign" className="flex items-center gap-2">
-                <Target className="w-4 h-4" />
-                Campaign
+              <TabsTrigger value="campaign" className="flex items-center gap-1 lg:gap-2 text-xs lg:text-sm">
+                <Target className="w-3 h-3 lg:w-4 lg:h-4" />
+                <span className="hidden sm:inline">Campaign</span>
+                <span className="sm:hidden">Camp</span>
               </TabsTrigger>
-              <TabsTrigger value="brief" className="flex items-center gap-2">
-                <PenTool className="w-4 h-4" />
+              <TabsTrigger value="brief" className="flex items-center gap-1 lg:gap-2 text-xs lg:text-sm">
+                <PenTool className="w-3 h-3 lg:w-4 lg:h-4" />
                 Brief
               </TabsTrigger>
-              <TabsTrigger value="post" className="flex items-center gap-2">
-                <FileText className="w-4 h-4" />
+              <TabsTrigger value="post" className="flex items-center gap-1 lg:gap-2 text-xs lg:text-sm">
+                <FileText className="w-3 h-3 lg:w-4 lg:h-4" />
                 Post
               </TabsTrigger>
-              <TabsTrigger value="series" className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
+              <TabsTrigger value="series" className="flex items-center gap-1 lg:gap-2 text-xs lg:text-sm">
+                <Calendar className="w-3 h-3 lg:w-4 lg:h-4" />
                 Series
               </TabsTrigger>
             </TabsList>
@@ -365,8 +370,8 @@ const CreateCampaign = () => {
         </Card>
 
         {/* Project Name Input */}
-        <Card className="p-4 mb-6 bg-gradient-glass backdrop-blur-xl border-border/10">
-          <div className="flex items-center space-x-4">
+        <Card className="p-3 lg:p-4 mb-4 lg:mb-6 bg-gradient-glass backdrop-blur-xl border-border/10">
+          <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
             <label className="text-sm font-medium whitespace-nowrap">Project Name:</label>
             <Input
               value={projectName}
@@ -377,48 +382,48 @@ const CreateCampaign = () => {
           </div>
         </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
           {/* Chat Interface */}
           <div className="lg:col-span-2">
-            <Card className="h-[600px] flex flex-col bg-gradient-glass backdrop-blur-xl border-border/10">
+            <Card className="h-[500px] lg:h-[600px] flex flex-col bg-gradient-glass backdrop-blur-xl border-border/10">
               {/* Chat Header */}
-              <div className="p-4 border-b border-border/10">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center">
-                    <Bot className="w-4 h-4 text-white" />
+              <div className="p-3 lg:p-4 border-b border-border/10">
+                <div className="flex items-center space-x-2 lg:space-x-3">
+                  <div className="w-6 h-6 lg:w-8 lg:h-8 bg-gradient-primary rounded-full flex items-center justify-center flex-shrink-0">
+                    <Bot className="w-3 h-3 lg:w-4 lg:h-4 text-white" />
                   </div>
-                  <div>
-                    <h3 className="font-semibold">AI Campaign Assistant</h3>
-                    <p className="text-xs text-muted-foreground">Powered by AI content generation</p>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-sm lg:text-base truncate">AI Content Assistant</h3>
+                    <p className="text-xs text-muted-foreground hidden sm:block">Powered by AI content generation</p>
                   </div>
-                  <Badge className="bg-green-500/20 text-green-500 border-green-500/30 ml-auto">
+                  <Badge className="bg-green-500/20 text-green-500 border-green-500/30 text-xs flex-shrink-0">
                     Online
                   </Badge>
                 </div>
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              <div className="flex-1 overflow-y-auto p-3 lg:p-4 space-y-3 lg:space-y-4">
                 {messages.map((message) => (
                   <div key={message.id} className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
-                    <div className={`flex items-start space-x-3 max-w-[80%] ${message.sender === "user" ? "flex-row-reverse space-x-reverse" : ""}`}>
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                    <div className={`flex items-start space-x-2 lg:space-x-3 max-w-[90%] sm:max-w-[80%] ${message.sender === "user" ? "flex-row-reverse space-x-reverse" : ""}`}>
+                      <div className={`w-6 h-6 lg:w-8 lg:h-8 rounded-full flex items-center justify-center shrink-0 ${
                         message.sender === "user" 
                           ? "bg-primary" 
                           : "bg-gradient-primary"
                       }`}>
                         {message.sender === "user" ? (
-                          <User className="w-4 h-4 text-white" />
+                          <User className="w-3 h-3 lg:w-4 lg:h-4 text-white" />
                         ) : (
-                          <Bot className="w-4 h-4 text-white" />
+                          <Bot className="w-3 h-3 lg:w-4 lg:h-4 text-white" />
                         )}
                       </div>
-                      <div className={`rounded-xl p-3 ${
+                      <div className={`rounded-xl p-2 lg:p-3 ${
                         message.sender === "user"
                           ? "bg-primary text-primary-foreground"
                           : "bg-white/10 border border-border/20"
                       }`}>
-                        <p className="text-sm whitespace-pre-line">{message.content}</p>
+                        <p className="text-xs lg:text-sm whitespace-pre-line break-words">{message.content}</p>
                         
                         {/* Generated Assets */}
                         {message.assets && message.assets.length > 0 && (
@@ -501,20 +506,20 @@ const CreateCampaign = () => {
               </div>
 
               {/* Input */}
-              <div className="p-4 border-t border-border/10">
-                <div className="flex space-x-2">
+              <div className="p-3 lg:p-4 border-t border-border/10">
+                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                   <Textarea
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder="Describe what you need for your campaign..."
-                    className="flex-1 min-h-[60px] resize-none"
+                    className="flex-1 min-h-[50px] lg:min-h-[60px] resize-none text-sm"
                     disabled={isGenerating}
                   />
                   <Button 
                     onClick={handleSendMessage} 
                     disabled={!inputValue.trim() || isGenerating}
-                    className="px-4"
+                    className="px-3 lg:px-4 sm:w-auto w-full"
                   >
                     <Send className="w-4 h-4" />
                   </Button>
@@ -524,19 +529,19 @@ const CreateCampaign = () => {
           </div>
 
           {/* Quick Actions & Tips */}
-          <div className="space-y-6">
-            <Card className="p-4 bg-gradient-glass backdrop-blur-xl border-border/10">
-              <h3 className="font-semibold mb-3">Quick Start Examples</h3>
+          <div className="space-y-4 lg:space-y-6">
+            <Card className="p-3 lg:p-4 bg-gradient-glass backdrop-blur-xl border-border/10">
+              <h3 className="font-semibold mb-3 text-sm lg:text-base">Quick Start Examples</h3>
               <div className="space-y-2">
                 {getQuickStartExamples().map((example, index) => (
                   <Button 
                     key={index}
                     variant="outline" 
                     size="sm" 
-                    className="w-full justify-start text-left"
+                    className="w-full justify-start text-left text-xs lg:text-sm p-2 lg:p-3"
                     onClick={() => setInputValue(example)}
                   >
-                    "{example}"
+                    <span className="truncate">"{example}"</span>
                   </Button>
                 ))}
               </div>
