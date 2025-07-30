@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,120 +19,38 @@ import {
   Users,
   Lightbulb,
   Tag,
-  Download,
-  Copy,
   Upload,
   Image,
   X
 } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { useToast } from "@/hooks/use-toast";
-
-interface BrandDnaProfile {
-  brandName: string;
-  tagline: string;
-  voiceAndTone: {
-    adjectives: string[];
-    description: string;
-  };
-  visualStyle: {
-    name: string;
-    description: string;
-    keyPrinciples: string[];
-    colorPalette: {
-      base: string[];
-      primary_accents: string[];
-    };
-    referenceImages: {
-      id: string;
-      name: string;
-      url: string;
-      description: string;
-    }[];
-  };
-}
-
-interface ContentPillar {
-  id: string;
-  name: string;
-  description: string;
-  color: string;
-}
-
-interface TargetAudience {
-  id: string;
-  name: string;
-  demographics: string;
-  psychographics: string;
-  painPoints: string[];
-  goals: string[];
-}
-
-interface ContentCategory {
-  id: string;
-  name: string;
-  description: string;
-  pillarId: string;
-  contentTypes: string[];
-}
+import { useStrategyContext, BrandDnaProfile, ContentPillar, TargetAudience, ContentCategory } from "@/contexts/StrategyContext";
 
 const StrategyPlanning = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { 
+    strategy, 
+    updateBrandProfile, 
+    updateContentPillars, 
+    updateTargetAudiences, 
+    updateContentCategories 
+  } = useStrategyContext();
   
-  // State management using Brand DNA Profile structure
-  const [brandDnaProfile, setBrandDnaProfile] = useState<BrandDnaProfile>({
-    brandName: "Healthiera",
-    tagline: "Clarity in Wellness.",
-    voiceAndTone: {
-      adjectives: ["Clear", "Supportive", "Trustworthy", "Professional", "Refined"],
-      description: "The brand speaks like a trusted health professional or a knowledgeable concierge. The tone is calm, clear, and reassuring. It avoids hype and jargon, focusing on providing straightforward, helpful information to busy individuals who value efficiency and expertise. It's supportive and empowering, building confidence through clarity."
-    },
-    visualStyle: {
-      name: "Refined Scientific Minimalism",
-      description: "A clean, high-end aesthetic that blends scientific precision with a warm, approachable feel. This style prioritizes clarity, trustworthiness, and elegance to appeal to discerning, health-conscious professionals.",
-      keyPrinciples: [
-        "Elegant Typography: A balanced use of classic serif (like on the 'HEALTHIERA' logo) and clean sans-serif fonts to create a hierarchy that is both beautiful and highly legible.",
-        "Meaningful Iconography: Simple, stylized icons, like the sun emblem, are used sparingly to represent key benefits or ingredients in a refined, symbolic way.",
-        "Structured, Uncluttered Layouts: A strong reliance on grids and ample white space to present information clearly and efficiently, respecting the user's time and attention.",
-        "Warm, Natural Palette: The color scheme is grounded in natural, premium tones, avoiding overly bright or synthetic colors to create a sense of calm and quality.",
-        "High-Fidelity Photography: Product and lifestyle imagery is bright, clean, and professionally shot, with a focus on natural light and textures to emphasize the quality of the product."
-      ],
-      colorPalette: {
-        base: ["Parchment Cream #F5F1E9", "Clean White #FFFFFF"],
-        primary_accents: ["Amber Brown #994A00", "Golden Sun #F2C34E", "Charcoal Black #2C2C2C"]
-      },
-      referenceImages: []
-    }
-  });
+  // Local state management - sync with context
+  const [brandDnaProfile, setBrandDnaProfile] = useState<BrandDnaProfile>(strategy.brandDnaProfile);
+  const [contentPillars, setContentPillars] = useState<ContentPillar[]>(strategy.contentPillars);
+  const [targetAudiences, setTargetAudiences] = useState<TargetAudience[]>(strategy.targetAudiences);
+  const [contentCategories, setContentCategories] = useState<ContentCategory[]>(strategy.contentCategories);
 
-  // Additional strategy components
-  const [contentPillars, setContentPillars] = useState<ContentPillar[]>([
-    { id: "1", name: "Thought Leadership", description: "Establish expertise in health and wellness", color: "blue" },
-    { id: "2", name: "Product Education", description: "Showcase features and benefits", color: "green" },
-    { id: "3", name: "Customer Success", description: "Highlight real results and testimonials", color: "purple" }
-  ]);
-
-  const [targetAudiences, setTargetAudiences] = useState<TargetAudience[]>([
-    {
-      id: "1",
-      name: "Health-Conscious Professionals",
-      demographics: "Ages 28-45, Working professionals with disposable income",
-      psychographics: "Wellness-focused, efficiency-driven, quality-conscious",
-      painPoints: ["Time constraints", "Information overload", "Quality concerns"],
-      goals: ["Optimize health", "Save time", "Trusted recommendations"]
-    }
-  ]);
-
-  const [contentCategories, setContentCategories] = useState<ContentCategory[]>([
-    {
-      id: "1",
-      name: "Educational Guides",
-      description: "In-depth wellness education and how-to content",
-      pillarId: "2",
-      contentTypes: ["Blog posts", "Video tutorials", "Infographics"]
-    }
-  ]);
+  // Sync local state with context when context changes
+  useEffect(() => {
+    setBrandDnaProfile(strategy.brandDnaProfile);
+    setContentPillars(strategy.contentPillars);
+    setTargetAudiences(strategy.targetAudiences);
+    setContentCategories(strategy.contentCategories);
+  }, [strategy]);
 
   const generateContextProfile = () => {
     return {
@@ -145,6 +63,12 @@ const StrategyPlanning = () => {
   };
 
   const handleSave = () => {
+    // Update context with current local state
+    updateBrandProfile(brandDnaProfile);
+    updateContentPillars(contentPillars);
+    updateTargetAudiences(targetAudiences);
+    updateContentCategories(contentCategories);
+    
     const completeStrategy = generateContextProfile();
     console.log("Complete Strategy Profile:", JSON.stringify(completeStrategy, null, 2));
     toast({

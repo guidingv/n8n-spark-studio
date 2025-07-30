@@ -8,8 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
+import { useStrategy } from "@/hooks/useStrategy";
 import { 
   Palette, 
   Target, 
@@ -20,21 +21,13 @@ import {
   Upload,
   Download,
   Copy,
-  RefreshCw
+  RefreshCw,
+  AlertCircle
 } from "lucide-react";
 
 interface CreateAssetDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}
-
-interface BrandGuidelines {
-  brandName: string;
-  colors: string[];
-  fonts: string[];
-  tone: string;
-  values: string[];
-  targetAudience: string;
 }
 
 interface GeneratedAsset {
@@ -45,22 +38,22 @@ interface GeneratedAsset {
   description: string;
 }
 
-const defaultBrandGuidelines: BrandGuidelines = {
-  brandName: "",
-  colors: ["#3B82F6", "#EF4444", "#10B981"],
-  fonts: ["Inter", "Roboto"],
-  tone: "Professional and approachable",
-  values: ["Innovation", "Quality", "Trust"],
-  targetAudience: "Tech-savvy professionals aged 25-45"
-};
-
 export const CreateAssetDialog: React.FC<CreateAssetDialogProps> = ({ open, onOpenChange }) => {
-  const [activeTab, setActiveTab] = useState("guidelines");
-  const [brandGuidelines, setBrandGuidelines] = useState<BrandGuidelines>(defaultBrandGuidelines);
+  const [activeTab, setActiveTab] = useState("create");
   const [assetType, setAssetType] = useState("");
   const [assetPrompt, setAssetPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedAssets, setGeneratedAssets] = useState<GeneratedAsset[]>([]);
+  
+  const { 
+    getBrandName, 
+    getBrandTone, 
+    getBrandValues, 
+    getBrandColors, 
+    getPrimaryAudience,
+    getAIContext,
+    isStrategyComplete 
+  } = useStrategy();
 
   const handleGenerateAsset = async () => {
     if (!assetType || !assetPrompt.trim()) {
@@ -68,16 +61,21 @@ export const CreateAssetDialog: React.FC<CreateAssetDialogProps> = ({ open, onOp
       return;
     }
 
+    if (!isStrategyComplete) {
+      toast.error("Please complete your brand strategy first in the Strategy Hub");
+      return;
+    }
+
     setIsGenerating(true);
     
     try {
-      // Simulate AI generation with brand guidelines
+      // Generate AI content using strategy context
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       const newAsset: GeneratedAsset = {
         id: Date.now().toString(),
         type: assetType,
-        content: generateAssetContent(assetType, assetPrompt, brandGuidelines),
+        content: generateAssetContent(assetType, assetPrompt),
         description: assetPrompt,
         url: assetType === "image" ? "https://images.unsplash.com/photo-1557683316-973673baf926?w=800&h=600&fit=crop" : undefined
       };
@@ -92,40 +90,44 @@ export const CreateAssetDialog: React.FC<CreateAssetDialogProps> = ({ open, onOp
     }
   };
 
-  const generateAssetContent = (type: string, prompt: string, guidelines: BrandGuidelines) => {
-    const brandContext = `Brand: ${guidelines.brandName}, Tone: ${guidelines.tone}, Values: ${guidelines.values.join(", ")}, Audience: ${guidelines.targetAudience}`;
+  const generateAssetContent = (type: string, prompt: string) => {
+    const brandName = getBrandName();
+    const tone = getBrandTone();
+    const values = getBrandValues();
+    const audience = getPrimaryAudience();
+    const audienceDesc = audience ? audience.name : "target audience";
     
     switch (type) {
       case "social-copy":
         return `🎯 ${prompt}
 
-${guidelines.brandName} brings innovation to life! 
+${brandName} brings innovation to life! 
 
-✨ ${guidelines.values.join(" • ")}
+✨ ${values.join(" • ")}
 
-Perfect for ${guidelines.targetAudience}
+Perfect for ${audienceDesc}
 
-#${guidelines.brandName.replace(/\s+/g, '')} #Innovation`;
+#${brandName.replace(/\s+/g, '')} #Innovation`;
 
       case "email-subject":
-        return `${guidelines.brandName}: ${prompt} - Exclusive for Our Community`;
+        return `${brandName}: ${prompt} - Exclusive for Our Community`;
 
       case "blog-intro":
-        return `Welcome to ${guidelines.brandName}'s latest insights on ${prompt}. 
+        return `Welcome to ${brandName}'s latest insights on ${prompt}. 
 
-As a brand committed to ${guidelines.values.join(", ").toLowerCase()}, we're excited to share how this impacts ${guidelines.targetAudience}.
+As a brand committed to ${values.join(", ").toLowerCase()}, we're excited to share how this impacts ${audienceDesc}.
 
-Our ${guidelines.tone.toLowerCase()} approach ensures you get practical, actionable information that makes a difference.`;
+Our approach ensures you get practical, actionable information that makes a difference.`;
 
       case "ad-copy":
         return `${prompt}
 
-Discover why ${guidelines.targetAudience} trust ${guidelines.brandName} for ${guidelines.values.join(", ").toLowerCase()}.
+Discover why ${audienceDesc} trust ${brandName} for ${values.join(", ").toLowerCase()}.
 
-${guidelines.tone} • Proven Results • Get Started Today`;
+Proven Results • Get Started Today`;
 
       default:
-        return `${prompt} - Crafted for ${guidelines.brandName} with ${guidelines.tone.toLowerCase()} tone, targeting ${guidelines.targetAudience}.`;
+        return `${prompt} - Crafted for ${brandName} with our signature approach, targeting ${audienceDesc}.`;
     }
   };
 
@@ -149,9 +151,9 @@ ${guidelines.tone} • Proven Results • Get Started Today`;
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="guidelines" className="flex items-center gap-2">
+            <TabsTrigger value="strategy" className="flex items-center gap-2">
               <Palette className="h-4 w-4" />
-              Brand Guidelines
+              Strategy Overview
             </TabsTrigger>
             <TabsTrigger value="create" className="flex items-center gap-2">
               <Target className="h-4 w-4" />
@@ -159,82 +161,71 @@ ${guidelines.tone} • Proven Results • Get Started Today`;
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="guidelines" className="space-y-4">
-            <Card className="p-4">
-              <h3 className="font-semibold mb-4 flex items-center gap-2">
-                <Palette className="h-4 w-4" />
-                Brand Identity
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="brandName">Brand Name</Label>
-                  <Input
-                    id="brandName"
-                    value={brandGuidelines.brandName}
-                    onChange={(e) => setBrandGuidelines(prev => ({ ...prev, brandName: e.target.value }))}
-                    placeholder="Your brand name"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="tone">Brand Tone</Label>
-                  <Input
-                    id="tone"
-                    value={brandGuidelines.tone}
-                    onChange={(e) => setBrandGuidelines(prev => ({ ...prev, tone: e.target.value }))}
-                    placeholder="Professional, friendly, bold..."
-                  />
-                </div>
-              </div>
-
-              <div className="mt-4 space-y-2">
-                <Label htmlFor="audience">Target Audience</Label>
-                <Textarea
-                  id="audience"
-                  value={brandGuidelines.targetAudience}
-                  onChange={(e) => setBrandGuidelines(prev => ({ ...prev, targetAudience: e.target.value }))}
-                  placeholder="Describe your target audience..."
-                  rows={2}
-                />
-              </div>
-
-              <div className="mt-4 space-y-2">
-                <Label>Brand Values</Label>
-                <div className="flex flex-wrap gap-2">
-                  {brandGuidelines.values.map((value, index) => (
-                    <Badge key={index} variant="secondary">{value}</Badge>
-                  ))}
-                </div>
-                <Input
-                  placeholder="Add a value and press Enter"
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter' && e.currentTarget.value.trim()) {
-                      setBrandGuidelines(prev => ({ 
-                        ...prev, 
-                        values: [...prev.values, e.currentTarget.value.trim()] 
-                      }));
-                      e.currentTarget.value = '';
-                    }
-                  }}
-                />
-              </div>
-
-              <div className="mt-4 space-y-2">
-                <Label>Brand Colors</Label>
-                <div className="flex flex-wrap gap-2">
-                  {brandGuidelines.colors.map((color, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <div 
-                        className="w-6 h-6 rounded border" 
-                        style={{ backgroundColor: color }}
-                      />
-                      <span className="text-sm font-mono">{color}</span>
+          <TabsContent value="strategy" className="space-y-4">
+            {!isStrategyComplete ? (
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  Complete your brand strategy in the Strategy Hub to enable AI-powered asset generation with your brand guidelines.
+                </AlertDescription>
+              </Alert>
+            ) : (
+              <Card className="p-4">
+                <h3 className="font-semibold mb-4 flex items-center gap-2">
+                  <Palette className="h-4 w-4" />
+                  Current Brand Strategy
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <div>
+                      <Label className="text-sm font-medium">Brand Name</Label>
+                      <p className="text-sm text-muted-foreground">{getBrandName()}</p>
                     </div>
-                  ))}
+                    
+                    <div>
+                      <Label className="text-sm font-medium">Primary Audience</Label>
+                      <p className="text-sm text-muted-foreground">
+                        {getPrimaryAudience()?.name || "No audience defined"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div>
+                      <Label className="text-sm font-medium">Brand Values</Label>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {getBrandValues().slice(0, 3).map((value, index) => (
+                          <Badge key={index} variant="secondary" className="text-xs">{value}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <Label className="text-sm font-medium">Brand Colors</Label>
+                      <div className="flex gap-2 mt-1">
+                        {getBrandColors().slice(0, 4).map((color, index) => (
+                          <div 
+                            key={index} 
+                            className="w-6 h-6 rounded border" 
+                            style={{ backgroundColor: color }}
+                            title={color}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </Card>
+
+                <div className="mt-4 p-3 bg-muted/50 rounded-lg">
+                  <Label className="text-sm font-medium">AI Context Preview</Label>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    All generated assets will use your complete brand strategy including voice, tone, 
+                    visual style, and target audience insights.
+                  </p>
+                </div>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="create" className="space-y-4">
@@ -274,7 +265,7 @@ ${guidelines.tone} • Proven Results • Get Started Today`;
 
               <Button 
                 onClick={handleGenerateAsset} 
-                disabled={isGenerating || !assetType || !assetPrompt.trim()}
+                disabled={isGenerating || !assetType || !assetPrompt.trim() || !isStrategyComplete}
                 className="w-full"
               >
                 {isGenerating ? (
