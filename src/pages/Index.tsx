@@ -207,7 +207,7 @@ const Index = () => {
           </div>
 
           {/* Content Calendar */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 h-fit">
             <ContentCalendar />
           </div>
         </div>
