@@ -18,7 +18,9 @@ import {
   Eye,
   Users,
   Lightbulb,
-  Tag
+  Tag,
+  Download,
+  Copy
 } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { useToast } from "@/hooks/use-toast";
@@ -122,19 +124,48 @@ const StrategyPlanning = () => {
     }
   ]);
 
-  const handleSave = () => {
-    // Combine all strategy data for comprehensive context
-    const completeStrategy = {
+  const generateContextProfile = () => {
+    return {
       brandDnaProfile,
       contentPillars,
       targetAudiences,
-      contentCategories
+      contentCategories,
+      ultimateGoal: "Create compelling, brand-aligned content that resonates with target audiences and supports business objectives"
     };
-    
+  };
+
+  const handleSave = () => {
+    const completeStrategy = generateContextProfile();
     console.log("Complete Strategy Profile:", JSON.stringify(completeStrategy, null, 2));
     toast({
       title: "Complete Strategy Saved",
       description: "Your comprehensive content strategy has been saved and will guide all content creation.",
+    });
+  };
+
+  const copyContextProfile = () => {
+    const profile = generateContextProfile();
+    navigator.clipboard.writeText(JSON.stringify(profile, null, 2));
+    toast({
+      title: "Context Profile Copied",
+      description: "The complete JSON context profile has been copied to your clipboard.",
+    });
+  };
+
+  const downloadContextProfile = () => {
+    const profile = generateContextProfile();
+    const blob = new Blob([JSON.stringify(profile, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `content-strategy-context-${brandDnaProfile.brandName.toLowerCase().replace(/\s+/g, '-')}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast({
+      title: "Context Profile Downloaded",
+      description: "Your content strategy context profile has been downloaded as a JSON file.",
     });
   };
 
@@ -350,21 +381,32 @@ const StrategyPlanning = () => {
             </div>
             <p className="text-muted-foreground">Define your comprehensive content strategy that will guide all content creation</p>
           </div>
-          <Button onClick={handleSave} className="flex items-center gap-2">
-            <Save className="w-4 h-4" />
-            Save Strategy
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button onClick={copyContextProfile} variant="outline" className="flex items-center gap-2">
+              <Copy className="w-4 h-4" />
+              Copy JSON Context
+            </Button>
+            <Button onClick={downloadContextProfile} variant="outline" className="flex items-center gap-2">
+              <Download className="w-4 h-4" />
+              Download JSON
+            </Button>
+            <Button onClick={handleSave} className="flex items-center gap-2">
+              <Save className="w-4 h-4" />
+              Save Strategy
+            </Button>
+          </div>
         </div>
 
         {/* Strategy Tabs */}
         <Tabs defaultValue="brand" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="brand">Brand Identity</TabsTrigger>
             <TabsTrigger value="voice">Voice & Tone</TabsTrigger>
             <TabsTrigger value="visual">Visual Style</TabsTrigger>
             <TabsTrigger value="pillars">Content Pillars</TabsTrigger>
             <TabsTrigger value="audience">Target Audience</TabsTrigger>
             <TabsTrigger value="categories">Content Categories</TabsTrigger>
+            <TabsTrigger value="context">JSON Context</TabsTrigger>
           </TabsList>
 
           {/* Brand Identity Tab */}
@@ -910,6 +952,62 @@ const StrategyPlanning = () => {
                 </Card>
               ))}
             </div>
+          </TabsContent>
+
+          {/* JSON Context Tab */}
+          <TabsContent value="context" className="space-y-4">
+            <Card className="p-6 bg-gradient-glass backdrop-blur-xl border-border/10">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Target className="w-5 h-5 text-primary" />
+                    <h3 className="text-lg font-semibold">Complete JSON Context Profile</h3>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button onClick={copyContextProfile} variant="outline" size="sm">
+                      <Copy className="w-4 h-4 mr-2" />
+                      Copy JSON
+                    </Button>
+                    <Button onClick={downloadContextProfile} variant="outline" size="sm">
+                      <Download className="w-4 h-4 mr-2" />
+                      Download
+                    </Button>
+                  </div>
+                </div>
+                
+                <p className="text-sm text-muted-foreground">
+                  This complete JSON profile can be used as context for AI content creation, shared with your team, or integrated into other content tools.
+                </p>
+                
+                <div className="bg-muted/20 rounded-lg p-4 max-h-96 overflow-y-auto">
+                  <pre className="text-sm whitespace-pre-wrap font-mono">
+                    {JSON.stringify(generateContextProfile(), null, 2)}
+                  </pre>
+                </div>
+                
+                <div className="grid md:grid-cols-2 gap-4 pt-4 border-t">
+                  <div>
+                    <h4 className="font-medium text-sm mb-2">Usage Examples:</h4>
+                    <ul className="text-xs text-muted-foreground space-y-1">
+                      <li>• Copy and paste into ChatGPT or Claude for content creation</li>
+                      <li>• Share with content creators and copywriters</li>
+                      <li>• Import into content management tools</li>
+                      <li>• Use as briefing document for agencies</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-sm mb-2">What's Included:</h4>
+                    <ul className="text-xs text-muted-foreground space-y-1">
+                      <li>• Complete brand DNA and voice guidelines</li>
+                      <li>• Visual style specifications</li>
+                      <li>• Content pillars and strategy</li>
+                      <li>• Target audience profiles</li>
+                      <li>• Content categories and types</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
