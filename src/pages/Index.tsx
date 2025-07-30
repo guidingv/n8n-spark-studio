@@ -159,7 +159,7 @@ const Index = () => {
             <StepCard
               step={3}
               title="Create & Publish"
-              description="Use AI assistance to create compelling content, manage assets, and track performance across all channels."
+              description="Use AI assistance to create compelling, brand-aligned content with bias checking and strategic guidance for consistent messaging."
               icon={Edit3}
               status={getStepStatus(3)}
               action={hasCreatedContent ? "View Content" : "Start Creating"}
