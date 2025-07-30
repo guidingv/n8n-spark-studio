@@ -149,7 +149,7 @@ const Index = () => {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-3 border rounded-lg">
+                <Link to="/strategy" className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors">
                   <div className="flex items-center gap-3">
                     <div className="p-1.5 rounded-full bg-primary/10 text-primary">
                       <FileText className="h-4 w-4" />
@@ -160,11 +160,11 @@ const Index = () => {
                     </div>
                   </div>
                   <Badge variant={isStrategyComplete ? "default" : "secondary"} className="text-xs">
-                    {isStrategyComplete ? 'Enter' : 'Enter'}
+                    Enter
                   </Badge>
-                </div>
+                </Link>
                 
-                <div className="flex items-center justify-between p-3 border rounded-lg">
+                <Link to="/calendar" className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors">
                   <div className="flex items-center gap-3">
                     <div className="p-1.5 rounded-full bg-primary/10 text-primary">
                       <Calendar className="h-4 w-4" />
@@ -174,21 +174,34 @@ const Index = () => {
                       <p className="text-xs text-muted-foreground">This month</p>
                     </div>
                   </div>
-                  <Badge variant="secondary" className="text-xs">12 items</Badge>
-                </div>
+                  <Badge variant="secondary" className="text-xs">View</Badge>
+                </Link>
                 
-                <div className="flex items-center justify-between p-3 border rounded-lg">
+                <Link to="/planning" className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors">
                   <div className="flex items-center gap-3">
                     <div className="p-1.5 rounded-full bg-primary/10 text-primary">
                       <Edit3 className="h-4 w-4" />
                     </div>
                     <div>
-                      <p className="font-medium text-sm">Published Content</p>
-                      <p className="text-xs text-muted-foreground">Last 30 days</p>
+                      <p className="font-medium text-sm">Content Planning</p>
+                      <p className="text-xs text-muted-foreground">Create briefs</p>
                     </div>
                   </div>
-                  <Badge variant="secondary" className="text-xs">8 pieces</Badge>
-                </div>
+                  <Badge variant="secondary" className="text-xs">Enter</Badge>
+                </Link>
+                
+                <Link to="/editor" className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="p-1.5 rounded-full bg-primary/10 text-primary">
+                      <Sparkles className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">Create Content</p>
+                      <p className="text-xs text-muted-foreground">AI-powered editor</p>
+                    </div>
+                  </div>
+                  <Badge variant="secondary" className="text-xs">Create</Badge>
+                </Link>
               </CardContent>
             </Card>
           </div>
