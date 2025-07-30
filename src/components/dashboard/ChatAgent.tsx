@@ -61,7 +61,7 @@ export const ChatAgent = () => {
   };
 
   return (
-    <Card className="p-6 bg-gradient-glass backdrop-blur-xl border-border/10 h-full">
+    <Card className="p-6 bg-gradient-glass backdrop-blur-xl border-border/10 max-h-96">
       <div className="flex items-center space-x-3 mb-6">
         <div className="w-10 h-10 bg-gradient-accent rounded-xl flex items-center justify-center shadow-glow">
           <Bot className="w-5 h-5 text-white" />
