@@ -57,7 +57,7 @@ export const CreateAssetDialog: React.FC<CreateAssetDialogProps> = ({ open, onOp
 
   const handleGenerateAsset = async () => {
     if (!assetType || !assetPrompt.trim()) {
-      toast.error("Please select an asset type and provide a description");
+      toast.error("Please select an asset type and provide a detailed prompt");
       return;
     }
 
@@ -81,10 +81,10 @@ export const CreateAssetDialog: React.FC<CreateAssetDialogProps> = ({ open, onOp
       };
 
       setGeneratedAssets(prev => [newAsset, ...prev]);
-      toast.success("Asset generated successfully!");
+      toast.success(`${assetType === 'image' ? 'Image' : 'Content'} generated successfully!`);
       setAssetPrompt("");
     } catch (error) {
-      toast.error("Failed to generate asset");
+      toast.error(`Failed to generate ${assetType === 'image' ? 'image' : 'content'}`);
     } finally {
       setIsGenerating(false);
     }
@@ -232,51 +232,66 @@ Proven Results • Get Started Today`;
             <Card className="p-4">
               <h3 className="font-semibold mb-4 flex items-center gap-2">
                 <Target className="h-4 w-4" />
-                Generate Assets
+                Generate AI Assets
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="space-y-4">
                 <div className="space-y-2">
                   <Label>Asset Type</Label>
                   <Select value={assetType} onValueChange={setAssetType}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select asset type" />
+                      <SelectValue placeholder="Select what you want to create" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="social-copy">Social Media Copy</SelectItem>
                       <SelectItem value="email-subject">Email Subject Line</SelectItem>
                       <SelectItem value="blog-intro">Blog Introduction</SelectItem>
                       <SelectItem value="ad-copy">Advertisement Copy</SelectItem>
-                      <SelectItem value="image">Image Concept</SelectItem>
+                      <SelectItem value="image">Image Generation</SelectItem>
                       <SelectItem value="video">Video Script</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Campaign Goal</Label>
-                  <Input
-                    placeholder="e.g., product launch, awareness..."
+                  <Label htmlFor="prompt">
+                    {assetType === 'image' ? 'Image Description' : 'Content Prompt'}
+                  </Label>
+                  <Textarea
+                    id="prompt"
+                    placeholder={
+                      assetType === 'image' 
+                        ? "Describe the image you want to create (e.g., 'A professional healthcare worker in a modern clinic setting, natural lighting, clean minimalist aesthetic')"
+                        : "Describe what you want to create (e.g., 'A compelling social post about our new wellness feature launch')"
+                    }
                     value={assetPrompt}
                     onChange={(e) => setAssetPrompt(e.target.value)}
+                    rows={4}
+                    className="resize-none"
                   />
+                  <p className="text-xs text-muted-foreground">
+                    {assetType === 'image' 
+                      ? "Be specific about visual elements, style, mood, and composition for best results."
+                      : "The AI will use your brand strategy to create content that matches your voice, tone, and target audience."
+                    }
+                  </p>
                 </div>
               </div>
 
               <Button 
                 onClick={handleGenerateAsset} 
                 disabled={isGenerating || !assetType || !assetPrompt.trim() || !isStrategyComplete}
-                className="w-full"
+                className="w-full mt-4"
               >
                 {isGenerating ? (
                   <>
                     <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                    Generating Asset...
+                    Generating with AI...
                   </>
                 ) : (
                   <>
                     <Sparkles className="h-4 w-4 mr-2" />
-                    Generate Brand-Aligned Asset
+                    Generate {assetType === 'image' ? 'Image' : 'Content'} with AI
                   </>
                 )}
               </Button>
