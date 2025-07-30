@@ -1,84 +1,39 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Calendar, Target, FileText, MoreHorizontal, Edit, Trash2 } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useProject, Project } from "@/contexts/ProjectContext";
+import { Plus, ChevronRight, Target, FileText, Calendar, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 
-interface Project {
-  id: string;
-  name: string;
-  description: string;
-  status: 'active' | 'paused' | 'completed';
-  type: 'campaign' | 'content-series' | 'brand-awareness' | 'product-launch';
-  createdAt: string;
-  deadline?: string;
-  progress: number;
-}
-
-const Projects = () => {
-  const [projects, setProjects] = useState<Project[]>([
-    {
-      id: '1',
-      name: 'Q1 Product Launch Campaign',
-      description: 'Comprehensive marketing campaign for our new AI-powered analytics tool',
-      status: 'active',
-      type: 'product-launch',
-      createdAt: '2024-01-15',
-      deadline: '2024-03-31',
-      progress: 65
-    },
-    {
-      id: '2',
-      name: 'Weekly Tech Insights Series',
-      description: 'Educational content series covering industry trends and best practices',
-      status: 'active',
-      type: 'content-series',
-      createdAt: '2024-01-08',
-      progress: 40
-    },
-    {
-      id: '3',
-      name: 'Brand Awareness Campaign',
-      description: 'Multi-channel campaign to increase brand recognition in the enterprise market',
-      status: 'paused',
-      type: 'brand-awareness',
-      createdAt: '2023-12-20',
-      deadline: '2024-06-30',
-      progress: 25
-    }
-  ]);
-
+const ProjectSelector = () => {
+  const { projects, currentProject, setCurrentProject, addProject } = useProject();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newProject, setNewProject] = useState({
     name: '',
     description: '',
     type: 'campaign' as Project['type'],
+    status: 'active' as Project['status'],
     deadline: ''
   });
 
   const handleCreateProject = () => {
     if (!newProject.name) return;
     
-    const project: Project = {
-      id: Date.now().toString(),
+    addProject({
       name: newProject.name,
       description: newProject.description,
-      status: 'active',
       type: newProject.type,
-      createdAt: new Date().toISOString().split('T')[0],
-      deadline: newProject.deadline || undefined,
-      progress: 0
-    };
+      status: newProject.status,
+      deadline: newProject.deadline || undefined
+    });
 
-    setProjects([project, ...projects]);
-    setNewProject({ name: '', description: '', type: 'campaign', deadline: '' });
+    setNewProject({ name: '', description: '', type: 'campaign', status: 'active', deadline: '' });
     setIsCreateDialogOpen(false);
   };
 
@@ -95,7 +50,7 @@ const Projects = () => {
     switch (type) {
       case 'campaign': return Target;
       case 'content-series': return FileText;
-      case 'brand-awareness': return Target;
+      case 'brand-awareness': return Users;
       case 'product-launch': return Calendar;
       default: return FileText;
     }
@@ -107,8 +62,8 @@ const Projects = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Projects</h1>
-            <p className="text-muted-foreground mt-2">Manage your content marketing projects</p>
+            <h1 className="text-3xl font-bold text-foreground">Select Project</h1>
+            <p className="text-muted-foreground mt-2">Choose a project to work on or create a new one</p>
           </div>
           
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
@@ -186,8 +141,18 @@ const Projects = () => {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => {
             const TypeIcon = getTypeIcon(project.type);
+            const isCurrentProject = currentProject?.id === project.id;
+            
             return (
-              <Card key={project.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+              <Card 
+                key={project.id} 
+                className={`hover:shadow-lg transition-all cursor-pointer ${
+                  isCurrentProject ? 'ring-2 ring-primary bg-primary/5' : ''
+                }`}
+                onClick={() => {
+                  setCurrentProject(project);
+                }}
+              >
                 <CardHeader className="pb-4">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
@@ -207,24 +172,9 @@ const Projects = () => {
                         </div>
                       </div>
                     </div>
-                    
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <Edit className="h-4 w-4 mr-2" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    {isCurrentProject && (
+                      <Badge className="text-xs">Current</Badge>
+                    )}
                   </div>
                 </CardHeader>
                 
@@ -248,7 +198,7 @@ const Projects = () => {
                   </div>
                   
                   {/* Project Details */}
-                  <div className="space-y-2 text-xs text-muted-foreground">
+                  <div className="space-y-2 text-xs text-muted-foreground mb-4">
                     <div className="flex justify-between">
                       <span>Created</span>
                       <span>{new Date(project.createdAt).toLocaleDateString()}</span>
@@ -261,14 +211,12 @@ const Projects = () => {
                     )}
                   </div>
                   
-                  <div className="flex gap-2 mt-4">
-                    <Button asChild variant="outline" size="sm" className="flex-1">
-                      <Link to={`/planning`}>View Details</Link>
-                    </Button>
-                    <Button asChild size="sm" className="flex-1">
-                      <Link to={`/editor`}>Create Content</Link>
-                    </Button>
-                  </div>
+                  <Button asChild className="w-full gap-2">
+                    <Link to="/">
+                      Enter Project
+                      <ChevronRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
                 </CardContent>
               </Card>
             );
@@ -293,4 +241,4 @@ const Projects = () => {
   );
 };
 
-export default Projects;
+export default ProjectSelector;

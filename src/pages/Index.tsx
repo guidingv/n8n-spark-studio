@@ -3,18 +3,23 @@ import { KPICards } from "@/components/dashboard/KPICards";
 import { ContentCalendar } from "@/components/dashboard/ContentCalendar";
 import { ChatAgent } from "@/components/dashboard/ChatAgent";
 import { ContentManager } from "@/components/dashboard/ContentManager";
+import { ProjectHeader } from "@/components/ProjectHeader";
 import { useStrategyContext } from "@/contexts/StrategyContext";
+import { useProject } from "@/contexts/ProjectContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-
 import { CheckCircle, Circle, ArrowRight, Target, FileText, Sparkles, BarChart3, Users, Calendar, Edit3 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 const Index = () => {
-  console.log("Index component rendering");
+  const { currentProject } = useProject();
   const { isStrategyComplete, strategy } = useStrategyContext();
-  console.log("Strategy data:", { isStrategyComplete, strategy });
+
+  // Redirect to project selector if no project is selected
+  if (!currentProject) {
+    return <Navigate to="/projects" replace />;
+  }
   
   // Calculate completion progress
   const hasContentBriefs = true; // You can track this with actual data later
@@ -104,21 +109,21 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardHeader />
+      <ProjectHeader />
       
       <div className="container mx-auto px-6 py-8">
         {/* Header with Quick Actions */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Content Hub</h1>
-              <p className="text-muted-foreground mt-1">Your complete content marketing overview</p>
+              <h1 className="text-3xl font-bold text-foreground">{currentProject.name}</h1>
+              <p className="text-muted-foreground mt-1">{currentProject.description}</p>
             </div>
             <div className="flex gap-3">
               <Button asChild variant="outline" className="gap-2">
                 <Link to="/projects">
                   <Target className="h-4 w-4" />
-                  Projects
+                  Switch Project
                 </Link>
               </Button>
               <Button asChild className="gap-2">
@@ -143,9 +148,9 @@ const Index = () => {
             <Card>
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">Active Projects</CardTitle>
-                  <Button asChild variant="ghost" size="sm">
-                    <Link to="/projects">View All</Link>
+                <CardTitle className="text-lg">Project Content</CardTitle>
+                <Button asChild variant="ghost" size="sm">
+                  <Link to="/planning">View All</Link>
                   </Button>
                 </div>
               </CardHeader>
@@ -153,40 +158,42 @@ const Index = () => {
                 <div className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className="p-1.5 rounded-full bg-primary/10 text-primary">
-                      <Target className="h-4 w-4" />
+                      <FileText className="h-4 w-4" />
                     </div>
                     <div>
-                      <p className="font-medium text-sm">Q1 Product Launch</p>
-                      <p className="text-xs text-muted-foreground">Due Mar 31</p>
+                      <p className="font-medium text-sm">Content Strategy</p>
+                      <p className="text-xs text-muted-foreground">{isStrategyComplete ? 'Completed' : 'In Progress'}</p>
                     </div>
                   </div>
-                  <Badge variant="secondary" className="text-xs">65%</Badge>
+                  <Badge variant={isStrategyComplete ? "default" : "secondary"} className="text-xs">
+                    {isStrategyComplete ? '100%' : '60%'}
+                  </Badge>
                 </div>
                 
                 <div className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className="p-1.5 rounded-full bg-primary/10 text-primary">
-                      <FileText className="h-4 w-4" />
+                      <Calendar className="h-4 w-4" />
                     </div>
                     <div>
-                      <p className="font-medium text-sm">Tech Insights Series</p>
-                      <p className="text-xs text-muted-foreground">Weekly content</p>
+                      <p className="font-medium text-sm">Content Calendar</p>
+                      <p className="text-xs text-muted-foreground">This month</p>
                     </div>
                   </div>
-                  <Badge variant="secondary" className="text-xs">40%</Badge>
+                  <Badge variant="secondary" className="text-xs">12 items</Badge>
                 </div>
                 
-                <div className="flex items-center justify-between p-3 border rounded-lg opacity-75">
+                <div className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="flex items-center gap-3">
-                    <div className="p-1.5 rounded-full bg-muted text-muted-foreground">
-                      <Users className="h-4 w-4" />
+                    <div className="p-1.5 rounded-full bg-primary/10 text-primary">
+                      <Edit3 className="h-4 w-4" />
                     </div>
                     <div>
-                      <p className="font-medium text-sm">Brand Awareness</p>
-                      <p className="text-xs text-muted-foreground">Paused</p>
+                      <p className="font-medium text-sm">Published Content</p>
+                      <p className="text-xs text-muted-foreground">Last 30 days</p>
                     </div>
                   </div>
-                  <Badge variant="outline" className="text-xs">25%</Badge>
+                  <Badge variant="secondary" className="text-xs">8 pieces</Badge>
                 </div>
               </CardContent>
             </Card>

@@ -123,18 +123,26 @@ const StrategyContext = createContext<StrategyContextType | undefined>(undefined
 const STORAGE_KEY = 'content-strategy-profile';
 
 export const StrategyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Get project-specific storage key
+  const getStorageKey = () => {
+    const currentProjectId = localStorage.getItem('currentProject');
+    return currentProjectId ? `strategy_${currentProjectId}` : 'strategy_default';
+  };
+
   const [strategy, setStrategy] = useState<StrategyProfile>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      return saved ? JSON.parse(saved) : defaultStrategy;
+      const storageKey = getStorageKey();
+      const stored = localStorage.getItem(storageKey);
+      return stored ? JSON.parse(stored) : defaultStrategy;
     } catch {
       return defaultStrategy;
     }
   });
 
-  // Save to localStorage whenever strategy changes
+  // Save strategy to localStorage whenever it changes (project-specific)
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(strategy));
+    const storageKey = getStorageKey();
+    localStorage.setItem(storageKey, JSON.stringify(strategy));
   }, [strategy]);
 
   const updateBrandProfile = (profile: BrandDnaProfile) => {
