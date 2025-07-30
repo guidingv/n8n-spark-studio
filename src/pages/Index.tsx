@@ -12,7 +12,9 @@ import { CheckCircle, Circle, ArrowRight, Target, FileText, Sparkles, BarChart3,
 import { Link } from "react-router-dom";
 
 const Index = () => {
+  console.log("Index component rendering");
   const { isStrategyComplete, strategy } = useStrategyContext();
+  console.log("Strategy data:", { isStrategyComplete, strategy });
   
   // Calculate completion progress
   const hasContentBriefs = true; // You can track this with actual data later
@@ -100,6 +102,7 @@ const Index = () => {
     </Card>
   );
 
+  console.log("About to render Index JSX");
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       <DashboardHeader />
