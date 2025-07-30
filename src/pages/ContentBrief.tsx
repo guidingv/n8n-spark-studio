@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
 import { 
   ArrowLeft, 
   Calendar,
@@ -21,7 +23,8 @@ import {
   Save,
   X,
   Plus,
-  Trash2
+  Trash2,
+  ChevronDown
 } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 
@@ -165,11 +168,28 @@ const ContentBrief = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [isEditing, setIsEditing] = useState(false);
+  const [briefData, setBriefData] = useState(() => contentBriefs.find(b => b.id === parseInt(id || "0")));
+  const { toast } = useToast();
+
+  const statusOptions = [
+    { value: "planning", label: "Planning", color: "bg-purple-500/20 text-purple-500 border-purple-500/30" },
+    { value: "brief-ready", label: "Brief Ready", color: "bg-yellow-500/20 text-yellow-500 border-yellow-500/30" },
+    { value: "in-progress", label: "In Progress", color: "bg-blue-500/20 text-blue-500 border-blue-500/30" },
+    { value: "approved", label: "Approved", color: "bg-green-500/20 text-green-500 border-green-500/30" }
+  ];
+
+  const handleStatusChange = (newStatus: string) => {
+    if (briefData) {
+      setBriefData({ ...briefData, status: newStatus });
+      const statusLabel = statusOptions.find(s => s.value === newStatus)?.label || newStatus;
+      toast({
+        title: "Status Updated",
+        description: `Brief status changed to ${statusLabel}`,
+      });
+    }
+  };
   
-  // Find the brief by ID
-  const brief = contentBriefs.find(b => b.id === parseInt(id || "0"));
-  
-  if (!brief) {
+  if (!briefData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
         <DashboardHeader />
@@ -184,7 +204,7 @@ const ContentBrief = () => {
     );
   }
 
-  const StatusIcon = getStatusIcon(brief.status);
+  const StatusIcon = getStatusIcon(briefData.status);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
@@ -235,30 +255,47 @@ const ContentBrief = () => {
               <div className="flex-1">
                 {isEditing ? (
                   <Input 
-                    defaultValue={brief.title}
+                    defaultValue={briefData.title}
                     className="text-2xl font-bold bg-transparent border-none p-0 mb-2"
                   />
                 ) : (
-                  <h1 className="text-2xl font-bold mb-2">{brief.title}</h1>
+                  <h1 className="text-2xl font-bold mb-2">{briefData.title}</h1>
                 )}
                 {isEditing ? (
                   <Textarea 
-                    defaultValue={brief.description}
+                    defaultValue={briefData.description}
                     className="bg-transparent border-none p-0 resize-none"
                     rows={2}
                   />
                 ) : (
-                  <p className="text-muted-foreground">{brief.description}</p>
+                  <p className="text-muted-foreground">{briefData.description}</p>
                 )}
               </div>
               
               <div className="flex items-center gap-2 ml-4">
-                <Badge className={getStatusColor(brief.status)}>
-                  <StatusIcon className="w-3 h-3 mr-1" />
-                  {brief.status}
-                </Badge>
-                <Badge className={getPriorityColor(brief.priority)}>
-                  {brief.priority} priority
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Badge className={`${getStatusColor(briefData.status)} cursor-pointer hover:opacity-80 transition-opacity`}>
+                      <StatusIcon className="w-3 h-3 mr-1" />
+                      {briefData.status}
+                      <ChevronDown className="w-3 h-3 ml-1" />
+                    </Badge>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="bg-background/95 backdrop-blur-xl border-border/20" align="end">
+                    {statusOptions.map((option) => (
+                      <DropdownMenuItem
+                        key={option.value}
+                        onClick={() => handleStatusChange(option.value)}
+                        className="cursor-pointer"
+                      >
+                        <span className={`w-2 h-2 rounded-full mr-2 ${option.color.split(' ')[0]}`} />
+                        {option.label}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <Badge className={getPriorityColor(briefData.priority)}>
+                  {briefData.priority} priority
                 </Badge>
               </div>
             </div>
@@ -268,7 +305,7 @@ const ContentBrief = () => {
                 <Target className="w-4 h-4 text-muted-foreground" />
                 <div>
                   <div className="text-xs text-muted-foreground">Strategy</div>
-                  <div className="font-medium">{brief.strategy}</div>
+                  <div className="font-medium">{briefData.strategy}</div>
                 </div>
               </div>
               
@@ -276,7 +313,7 @@ const ContentBrief = () => {
                 <User className="w-4 h-4 text-muted-foreground" />
                 <div>
                   <div className="text-xs text-muted-foreground">Assignee</div>
-                  <div className="font-medium">{brief.assignee}</div>
+                  <div className="font-medium">{briefData.assignee}</div>
                 </div>
               </div>
               
@@ -284,7 +321,7 @@ const ContentBrief = () => {
                 <Calendar className="w-4 h-4 text-muted-foreground" />
                 <div>
                   <div className="text-xs text-muted-foreground">Due Date</div>
-                  <div className="font-medium">{new Date(brief.dueDate).toLocaleDateString()}</div>
+                  <div className="font-medium">{new Date(briefData.dueDate).toLocaleDateString()}</div>
                 </div>
               </div>
               
@@ -292,7 +329,7 @@ const ContentBrief = () => {
                 <FileText className="w-4 h-4 text-muted-foreground" />
                 <div>
                   <div className="text-xs text-muted-foreground">Content Type</div>
-                  <div className="font-medium">{brief.contentType}</div>
+                  <div className="font-medium">{briefData.contentType}</div>
                 </div>
               </div>
             </div>
@@ -313,28 +350,28 @@ const ContentBrief = () => {
                   <Label className="text-sm font-medium text-muted-foreground">Background</Label>
                   {isEditing ? (
                     <Textarea 
-                      defaultValue={brief.background}
+                      defaultValue={briefData.background}
                       className="mt-2"
                       rows={3}
                     />
                   ) : (
-                    <p className="mt-2">{brief.background}</p>
+                    <p className="mt-2">{briefData.background}</p>
                   )}
                 </div>
                 <div>
                   <Label className="text-sm font-medium text-muted-foreground">Primary Goal</Label>
                   {isEditing ? (
-                    <Input defaultValue={brief.goal} className="mt-2" />
+                    <Input defaultValue={briefData.goal} className="mt-2" />
                   ) : (
-                    <p className="mt-2">{brief.goal}</p>
+                    <p className="mt-2">{briefData.goal}</p>
                   )}
                 </div>
                 <div>
                   <Label className="text-sm font-medium text-muted-foreground">Target Audience</Label>
                   {isEditing ? (
-                    <Input defaultValue={brief.audience} className="mt-2" />
+                    <Input defaultValue={briefData.audience} className="mt-2" />
                   ) : (
-                    <p className="mt-2">{brief.audience}</p>
+                    <p className="mt-2">{briefData.audience}</p>
                   )}
                 </div>
               </div>
@@ -355,7 +392,7 @@ const ContentBrief = () => {
                 )}
               </div>
               <div className="space-y-3">
-                {brief.keyMessages.map((message, index) => (
+                {briefData.keyMessages.map((message, index) => (
                   <div key={index} className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
                     {isEditing ? (
@@ -388,7 +425,7 @@ const ContentBrief = () => {
                 )}
               </div>
               <div className="space-y-4">
-                {brief.contentOutline.map((content, index) => (
+                {briefData.contentOutline.map((content, index) => (
                   <div key={index} className="border border-border/20 rounded-lg p-4">
                     <div className="flex items-start justify-between mb-2">
                       <Badge variant="outline" className="mb-2">{content.type}</Badge>
@@ -421,7 +458,7 @@ const ContentBrief = () => {
             <Card className="p-6 bg-gradient-glass backdrop-blur-xl border-border/10">
               <h3 className="font-semibold mb-4">Deliverables</h3>
               <div className="space-y-2">
-                {brief.deliverables.map((deliverable, index) => (
+                {briefData.deliverables.map((deliverable, index) => (
                   <div key={index} className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-500" />
                     <span className="text-sm">{deliverable}</span>
@@ -441,7 +478,7 @@ const ContentBrief = () => {
                 )}
               </div>
               <div className="space-y-2">
-                {brief.requirements.map((requirement, index) => (
+                {briefData.requirements.map((requirement, index) => (
                   <div key={index} className="flex items-start gap-2">
                     <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0" />
                     {isEditing ? (
@@ -470,7 +507,7 @@ const ContentBrief = () => {
                 )}
               </div>
               <div className="space-y-2">
-                {brief.resources.map((resource, index) => (
+                {briefData.resources.map((resource, index) => (
                   <div key={index} className="flex items-start gap-2">
                     <FileText className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                     {isEditing ? (

@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Lightbulb, 
   Plus, 
@@ -18,7 +20,8 @@ import {
   FileText,
   CheckCircle2,
   AlertCircle,
-  PlayCircle
+  PlayCircle,
+  ChevronDown
 } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 
@@ -114,8 +117,29 @@ const ContentPlanning = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
+  const [briefs, setBriefs] = useState(contentBriefs);
+  const { toast } = useToast();
 
-  const filteredBriefs = contentBriefs.filter(brief => {
+  const statusOptions = [
+    { value: "planning", label: "Planning", color: "bg-purple-500/20 text-purple-500 border-purple-500/30" },
+    { value: "brief-ready", label: "Brief Ready", color: "bg-yellow-500/20 text-yellow-500 border-yellow-500/30" },
+    { value: "in-progress", label: "In Progress", color: "bg-blue-500/20 text-blue-500 border-blue-500/30" },
+    { value: "approved", label: "Approved", color: "bg-green-500/20 text-green-500 border-green-500/30" }
+  ];
+
+  const handleStatusChange = (briefId: number, newStatus: string) => {
+    setBriefs(prev => prev.map(brief => 
+      brief.id === briefId ? { ...brief, status: newStatus } : brief
+    ));
+    
+    const statusLabel = statusOptions.find(s => s.value === newStatus)?.label || newStatus;
+    toast({
+      title: "Status Updated",
+      description: `Brief status changed to ${statusLabel}`,
+    });
+  };
+
+  const filteredBriefs = briefs.filter(brief => {
     const matchesSearch = brief.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          brief.strategy.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = selectedStatus === "all" || brief.status === selectedStatus;
@@ -202,10 +226,30 @@ const ContentPlanning = () => {
                       <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{brief.description}</p>
                     </div>
                     <div className="flex items-center gap-2 ml-4">
-                      <Badge className={getStatusColor(brief.status)}>
-                        <StatusIcon className="w-3 h-3 mr-1" />
-                        {brief.status}
-                      </Badge>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Badge className={`${getStatusColor(brief.status)} cursor-pointer hover:opacity-80 transition-opacity`}>
+                            <StatusIcon className="w-3 h-3 mr-1" />
+                            {brief.status}
+                            <ChevronDown className="w-3 h-3 ml-1" />
+                          </Badge>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="bg-background/95 backdrop-blur-xl border-border/20" align="end">
+                          {statusOptions.map((option) => (
+                            <DropdownMenuItem
+                              key={option.value}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleStatusChange(brief.id, option.value);
+                              }}
+                              className="cursor-pointer"
+                            >
+                              <span className={`w-2 h-2 rounded-full mr-2 ${option.color.split(' ')[0]}`} />
+                              {option.label}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </div>
 
@@ -273,9 +317,9 @@ const ContentPlanning = () => {
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <span>{filteredBriefs.length} briefs shown</span>
             <span>
-              {contentBriefs.filter(b => b.status === 'approved').length} approved • 
-              {contentBriefs.filter(b => b.status === 'in-progress').length} in progress • 
-              {contentBriefs.filter(b => b.status === 'planning').length} planning
+              {briefs.filter(b => b.status === 'approved').length} approved • 
+              {briefs.filter(b => b.status === 'in-progress').length} in progress • 
+              {briefs.filter(b => b.status === 'planning').length} planning
             </span>
           </div>
         </Card>
