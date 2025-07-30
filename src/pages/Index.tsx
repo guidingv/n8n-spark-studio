@@ -111,9 +111,11 @@ const Index = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-3xl font-bold text-foreground">Content Marketing Hub</h1>
-            <Button className="gap-2">
-              <Sparkles className="h-4 w-4" />
-              New Project
+            <Button asChild className="gap-2">
+              <Link to="/projects">
+                <Sparkles className="h-4 w-4" />
+                New Project
+              </Link>
             </Button>
           </div>
         </div>

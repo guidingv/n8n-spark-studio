@@ -14,6 +14,7 @@ import StrategyPlanning from "./pages/StrategyPlanning";
 import AssetHub from "./pages/AssetHub";
 import CreateCampaign from "./pages/CreateCampaign";
 import ContentEditor from "./pages/ContentEditor";
+import Projects from "./pages/Projects";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/projects" element={<Projects />} />
               <Route path="/calendar" element={<ContentCalendar />} />
               <Route path="/planning" element={<ContentPlanning />} />
               <Route path="/planning/:id" element={<ContentBrief />} />
