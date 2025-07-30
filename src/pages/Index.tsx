@@ -107,66 +107,205 @@ const Index = () => {
       <DashboardHeader />
       
       <div className="container mx-auto px-6 py-8">
-        {/* Header with New Project Button */}
+        {/* Header with Quick Actions */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-bold text-foreground">Content Marketing Hub</h1>
-            <Button asChild className="gap-2">
-              <Link to="/projects">
-                <Sparkles className="h-4 w-4" />
-                New Project
-              </Link>
-            </Button>
-          </div>
-        </div>
-
-        {/* Getting Started Steps */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-semibold text-foreground mb-6">Getting Started</h2>
-          <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-3">
-            <StepCard
-              step={1}
-              title="Define Strategy"
-              description="Set up your brand DNA, content pillars, and target audiences to create a comprehensive content strategy."
-              icon={Target}
-              status={getStepStatus(1)}
-              action={isStrategyComplete ? "Review Strategy" : "Start Strategy"}
-              link="/strategy"
-            />
-            
-            <StepCard
-              step={2}
-              title="Plan Content"
-              description="Create detailed content briefs and plan your content calendar based on your strategy."
-              icon={FileText}
-              status={getStepStatus(2)}
-              action="Plan Content"
-              link="/planning"
-            />
-            
-            <StepCard
-              step={3}
-              title="Create & Publish"
-              description="Use AI-powered tools to create engaging content and manage your publishing schedule."
-              icon={Sparkles}
-              status={getStepStatus(3)}
-              action="Create Content"
-              link="/editor"
-            />
-          </div>
-        </div>
-
-        {/* Dashboard Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="lg:col-span-2">
-            <KPICards />
-            <div className="mt-6">
-              <ContentCalendar />
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Content Hub</h1>
+              <p className="text-muted-foreground mt-1">Your complete content marketing overview</p>
+            </div>
+            <div className="flex gap-3">
+              <Button asChild variant="outline" className="gap-2">
+                <Link to="/projects">
+                  <Target className="h-4 w-4" />
+                  Projects
+                </Link>
+              </Button>
+              <Button asChild className="gap-2">
+                <Link to="/editor">
+                  <Edit3 className="h-4 w-4" />
+                  Create Content
+                </Link>
+              </Button>
             </div>
           </div>
-          <div className="space-y-6">
+        </div>
+
+        {/* KPI Overview */}
+        <div className="mb-8">
+          <KPICards />
+        </div>
+
+        {/* Main Dashboard Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          {/* Projects Overview */}
+          <div className="lg:col-span-1">
+            <Card>
+              <CardHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">Active Projects</CardTitle>
+                  <Button asChild variant="ghost" size="sm">
+                    <Link to="/projects">View All</Link>
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between p-3 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="p-1.5 rounded-full bg-primary/10 text-primary">
+                      <Target className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">Q1 Product Launch</p>
+                      <p className="text-xs text-muted-foreground">Due Mar 31</p>
+                    </div>
+                  </div>
+                  <Badge variant="secondary" className="text-xs">65%</Badge>
+                </div>
+                
+                <div className="flex items-center justify-between p-3 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="p-1.5 rounded-full bg-primary/10 text-primary">
+                      <FileText className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">Tech Insights Series</p>
+                      <p className="text-xs text-muted-foreground">Weekly content</p>
+                    </div>
+                  </div>
+                  <Badge variant="secondary" className="text-xs">40%</Badge>
+                </div>
+                
+                <div className="flex items-center justify-between p-3 border rounded-lg opacity-75">
+                  <div className="flex items-center gap-3">
+                    <div className="p-1.5 rounded-full bg-muted text-muted-foreground">
+                      <Users className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">Brand Awareness</p>
+                      <p className="text-xs text-muted-foreground">Paused</p>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="text-xs">25%</Badge>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Content Calendar */}
+          <div className="lg:col-span-2">
+            <ContentCalendar />
+          </div>
+        </div>
+
+        {/* Recent Content & Tools */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Recent Content */}
+          <div className="lg:col-span-1">
+            <Card>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg">Recent Content</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center gap-3 p-3 border rounded-lg">
+                  <div className="p-1.5 rounded-full bg-green-100 text-green-600">
+                    <CheckCircle className="h-4 w-4" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm">AI Analytics Blog Post</p>
+                    <p className="text-xs text-muted-foreground">Published 2 days ago</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3 p-3 border rounded-lg">
+                  <div className="p-1.5 rounded-full bg-yellow-100 text-yellow-600">
+                    <Circle className="h-4 w-4" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm">Product Demo Video</p>
+                    <p className="text-xs text-muted-foreground">In review</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3 p-3 border rounded-lg">
+                  <div className="p-1.5 rounded-full bg-blue-100 text-blue-600">
+                    <Edit3 className="h-4 w-4" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm">Weekly Newsletter</p>
+                    <p className="text-xs text-muted-foreground">Draft</p>
+                  </div>
+                </div>
+                
+                <Button asChild variant="outline" size="sm" className="w-full mt-4">
+                  <Link to="/planning">View All Content</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* AI Assistant & Tools */}
+          <div className="lg:col-span-2 space-y-6">
             <ChatAgent />
             <ContentManager />
+          </div>
+        </div>
+
+        {/* Quick Actions Grid */}
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold text-foreground mb-6">Quick Actions</h2>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardContent className="p-6 text-center">
+                <div className="p-3 rounded-full bg-primary/10 text-primary w-fit mx-auto mb-3">
+                  <Target className="h-6 w-6" />
+                </div>
+                <h3 className="font-semibold mb-2">Strategy Planning</h3>
+                <p className="text-sm text-muted-foreground mb-4">Define content strategy and pillars</p>
+                <Button asChild variant="outline" size="sm" className="w-full">
+                  <Link to="/strategy">Start Planning</Link>
+                </Button>
+              </CardContent>
+            </Card>
+            
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardContent className="p-6 text-center">
+                <div className="p-3 rounded-full bg-primary/10 text-primary w-fit mx-auto mb-3">
+                  <Calendar className="h-6 w-6" />
+                </div>
+                <h3 className="font-semibold mb-2">Content Calendar</h3>
+                <p className="text-sm text-muted-foreground mb-4">Schedule and organize content</p>
+                <Button asChild variant="outline" size="sm" className="w-full">
+                  <Link to="/calendar">View Calendar</Link>
+                </Button>
+              </CardContent>
+            </Card>
+            
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardContent className="p-6 text-center">
+                <div className="p-3 rounded-full bg-primary/10 text-primary w-fit mx-auto mb-3">
+                  <FileText className="h-6 w-6" />
+                </div>
+                <h3 className="font-semibold mb-2">Content Briefs</h3>
+                <p className="text-sm text-muted-foreground mb-4">Create detailed content plans</p>
+                <Button asChild variant="outline" size="sm" className="w-full">
+                  <Link to="/planning">Create Brief</Link>
+                </Button>
+              </CardContent>
+            </Card>
+            
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardContent className="p-6 text-center">
+                <div className="p-3 rounded-full bg-primary/10 text-primary w-fit mx-auto mb-3">
+                  <BarChart3 className="h-6 w-6" />
+                </div>
+                <h3 className="font-semibold mb-2">Analytics</h3>
+                <p className="text-sm text-muted-foreground mb-4">Track content performance</p>
+                <Button variant="outline" size="sm" className="w-full" disabled>
+                  Coming Soon
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
