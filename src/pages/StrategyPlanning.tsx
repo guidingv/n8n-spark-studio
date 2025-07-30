@@ -23,7 +23,7 @@ import {
   Image,
   X
 } from "lucide-react";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { ProjectHeader } from "@/components/ProjectHeader";
 import { useToast } from "@/hooks/use-toast";
 import { useStrategyContext, BrandDnaProfile, ContentPillar, TargetAudience, ContentCategory } from "@/contexts/StrategyContext";
 
@@ -319,7 +319,7 @@ const StrategyPlanning = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
-      <DashboardHeader />
+      <ProjectHeader />
       
       <div className="max-w-7xl mx-auto p-4 lg:p-6">
         {/* Back Button */}
