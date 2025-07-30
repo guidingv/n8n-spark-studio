@@ -58,10 +58,10 @@ const Index = () => {
   }) => (
     <Card className={`relative transition-all duration-200 ${
       status === 'current' 
-        ? 'border-primary shadow-lg shadow-primary/10' 
+        ? 'border-primary shadow-lg shadow-primary/10 bg-primary/5' 
         : status === 'complete' 
-        ? 'border-green-500/50 bg-green-50/50' 
-        : 'border-muted-foreground/20 opacity-75'
+        ? 'border-green-500/50 bg-green-500/10' 
+        : 'border-muted-foreground/20 bg-muted/30 opacity-75'
     }`}>
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
@@ -85,7 +85,7 @@ const Index = () => {
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-muted-foreground mb-4">{description}</p>
+        <p className="text-foreground mb-4">{description}</p>
         <Button 
           asChild 
           variant={status === 'current' ? 'default' : status === 'complete' ? 'outline' : 'ghost'}
@@ -116,23 +116,19 @@ const Index = () => {
             </p>
           </div>
 
-          {/* Overall Progress */}
-          <Card className="mb-8">
+          {/* Status Overview */}
+          <Card className="mb-8 bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-foreground">
                 <BarChart3 className="h-5 w-5" />
-                Your Progress
+                Your Marketing Hub Status
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center gap-4">
-                <Progress value={overallProgress} className="flex-1" />
-                <span className="text-sm font-medium">{overallProgress}% Complete</span>
-              </div>
-              <p className="text-sm text-muted-foreground mt-2">
-                {overallProgress === 100 
-                  ? "🎉 You're all set up! Your marketing hub is ready to use."
-                  : `${overallProgress < 33 ? "Let's start with your strategy foundation" : overallProgress < 66 ? "Time to plan your content" : "Ready to create amazing content!"}`
+              <p className="text-foreground">
+                {isStrategyComplete 
+                  ? "🚀 Your marketing hub is active and ready for ongoing content creation and management."
+                  : "👋 Welcome! Set up your strategy foundation to unlock the full potential of your marketing hub."
                 }
               </p>
             </CardContent>
