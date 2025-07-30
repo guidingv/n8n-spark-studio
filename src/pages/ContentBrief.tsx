@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { 
   ArrowLeft, 
@@ -281,7 +282,7 @@ const ContentBrief = () => {
                       <ChevronDown className="w-3 h-3 ml-1" />
                     </Badge>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-background/95 backdrop-blur-xl border-border/20" align="end">
+                  <DropdownMenuContent className="z-50 bg-background border-border shadow-lg" align="end">
                     {statusOptions.map((option) => (
                       <DropdownMenuItem
                         key={option.value}
@@ -303,33 +304,85 @@ const ContentBrief = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-4 border-t border-border/10">
               <div className="flex items-center gap-2">
                 <Target className="w-4 h-4 text-muted-foreground" />
-                <div>
+                <div className="flex-1">
                   <div className="text-xs text-muted-foreground">Strategy</div>
-                  <div className="font-medium">{briefData.strategy}</div>
+                  {isEditing ? (
+                    <Select defaultValue={briefData.strategy} onValueChange={(value) => setBriefData({...briefData, strategy: value})}>
+                      <SelectTrigger className="h-auto p-0 border-none bg-transparent">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="z-50">
+                        <SelectItem value="Spring Campaign 2024">Spring Campaign 2024</SelectItem>
+                        <SelectItem value="Thought Leadership Series">Thought Leadership Series</SelectItem>
+                        <SelectItem value="Product Launch">Product Launch</SelectItem>
+                        <SelectItem value="Brand Awareness">Brand Awareness</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <div className="font-medium">{briefData.strategy}</div>
+                  )}
                 </div>
               </div>
               
               <div className="flex items-center gap-2">
                 <User className="w-4 h-4 text-muted-foreground" />
-                <div>
+                <div className="flex-1">
                   <div className="text-xs text-muted-foreground">Assignee</div>
-                  <div className="font-medium">{briefData.assignee}</div>
+                  {isEditing ? (
+                    <Select defaultValue={briefData.assignee} onValueChange={(value) => setBriefData({...briefData, assignee: value})}>
+                      <SelectTrigger className="h-auto p-0 border-none bg-transparent">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="z-50">
+                        <SelectItem value="Sarah Chen">Sarah Chen</SelectItem>
+                        <SelectItem value="Mike Johnson">Mike Johnson</SelectItem>
+                        <SelectItem value="Alex Rodriguez">Alex Rodriguez</SelectItem>
+                        <SelectItem value="Emma Wilson">Emma Wilson</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <div className="font-medium">{briefData.assignee}</div>
+                  )}
                 </div>
               </div>
               
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-muted-foreground" />
-                <div>
+                <div className="flex-1">
                   <div className="text-xs text-muted-foreground">Due Date</div>
-                  <div className="font-medium">{new Date(briefData.dueDate).toLocaleDateString()}</div>
+                  {isEditing ? (
+                    <Input 
+                      type="date" 
+                      defaultValue={briefData.dueDate}
+                      onChange={(e) => setBriefData({...briefData, dueDate: e.target.value})}
+                      className="h-auto p-0 border-none bg-transparent font-medium"
+                    />
+                  ) : (
+                    <div className="font-medium">{new Date(briefData.dueDate).toLocaleDateString()}</div>
+                  )}
                 </div>
               </div>
               
               <div className="flex items-center gap-2">
                 <FileText className="w-4 h-4 text-muted-foreground" />
-                <div>
+                <div className="flex-1">
                   <div className="text-xs text-muted-foreground">Content Type</div>
-                  <div className="font-medium">{briefData.contentType}</div>
+                  {isEditing ? (
+                    <Select defaultValue={briefData.contentType} onValueChange={(value) => setBriefData({...briefData, contentType: value})}>
+                      <SelectTrigger className="h-auto p-0 border-none bg-transparent">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="z-50">
+                        <SelectItem value="Multi-channel campaign">Multi-channel campaign</SelectItem>
+                        <SelectItem value="Educational content">Educational content</SelectItem>
+                        <SelectItem value="Social media">Social media</SelectItem>
+                        <SelectItem value="Blog content">Blog content</SelectItem>
+                        <SelectItem value="Email marketing">Email marketing</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <div className="font-medium">{briefData.contentType}</div>
+                  )}
                 </div>
               </div>
             </div>
@@ -456,12 +509,28 @@ const ContentBrief = () => {
           <div className="space-y-6">
             {/* Deliverables */}
             <Card className="p-6 bg-gradient-glass backdrop-blur-xl border-border/10">
-              <h3 className="font-semibold mb-4">Deliverables</h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold">Deliverables</h3>
+                {isEditing && (
+                  <Button size="sm" variant="outline">
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
               <div className="space-y-2">
                 {briefData.deliverables.map((deliverable, index) => (
                   <div key={index} className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-500" />
-                    <span className="text-sm">{deliverable}</span>
+                    <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
+                    {isEditing ? (
+                      <div className="flex items-center gap-2 flex-1">
+                        <Input defaultValue={deliverable} className="text-sm" />
+                        <Button size="sm" variant="ghost">
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <span className="text-sm">{deliverable}</span>
+                    )}
                   </div>
                 ))}
               </div>
