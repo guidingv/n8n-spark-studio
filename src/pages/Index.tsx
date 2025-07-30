@@ -77,8 +77,8 @@ const Index = () => {
             </div>
             <div>
               <CardTitle className="text-lg">Step {step}: {title}</CardTitle>
-              <Badge variant={status === 'complete' ? 'default' : status === 'current' ? 'secondary' : 'outline'} className="mt-1">
-                {status === 'complete' ? 'Complete' : status === 'current' ? 'Active' : 'Upcoming'}
+              <Badge variant={status === 'current' ? 'secondary' : 'outline'} className="mt-1">
+                {status === 'current' ? 'Active' : 'Available'}
               </Badge>
             </div>
           </div>
