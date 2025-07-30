@@ -8,6 +8,7 @@ import { StrategyProvider } from "./contexts/StrategyContext";
 import Index from "./pages/Index";
 import ContentCalendar from "./pages/ContentCalendar";
 import ContentPlanning from "./pages/ContentPlanning";
+import ContentBrief from "./pages/ContentBrief";
 import StrategyPlanning from "./pages/StrategyPlanning";
 import AssetHub from "./pages/AssetHub";
 import CreateCampaign from "./pages/CreateCampaign";
@@ -28,6 +29,7 @@ function App() {
               <Route path="/" element={<Index />} />
               <Route path="/calendar" element={<ContentCalendar />} />
               <Route path="/planning" element={<ContentPlanning />} />
+              <Route path="/planning/:id" element={<ContentBrief />} />
               <Route path="/strategy" element={<StrategyPlanning />} />
               <Route path="/assets" element={<AssetHub />} />
               <Route path="/create" element={<CreateCampaign />} />
