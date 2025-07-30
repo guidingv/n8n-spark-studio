@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { useStrategy } from "@/hooks/useStrategy";
 import { 
   Sparkles, 
   Send, 
@@ -17,7 +19,10 @@ import {
   Download,
   Save,
   Wand2,
-  ArrowLeft
+  ArrowLeft,
+  Zap,
+  Target,
+  PenTool
 } from "lucide-react";
 
 interface Message {
@@ -30,26 +35,48 @@ interface Message {
 
 interface GeneratedAsset {
   id: string;
-  type: "image" | "text" | "calendar";
+  type: "image" | "text" | "calendar" | "brief" | "campaign";
   title: string;
   content: string;
   metadata?: any;
 }
 
+type CreationType = "campaign" | "brief" | "post" | "series";
+
 const CreateCampaign = () => {
   const navigate = useNavigate();
+  const { getAIContext, isStrategyComplete } = useStrategy();
+  const [activeTab, setActiveTab] = useState<CreationType>("campaign");
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
-      content: "Hi! I'm your campaign creation assistant. Tell me about the campaign you'd like to create. What's your goal, target audience, and key message?",
+      content: getWelcomeMessage("campaign"),
       sender: "bot",
       timestamp: new Date()
     }
   ]);
   const [inputValue, setInputValue] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [campaignName, setCampaignName] = useState("");
+  const [projectName, setProjectName] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  function getWelcomeMessage(type: CreationType): string {
+    const context = isStrategyComplete ? getAIContext() : null;
+    const brandInfo = context?.brand ? `for ${context.brand.name}` : "";
+    
+    switch (type) {
+      case "campaign":
+        return `Hi! I'm your AI content creation assistant. I'll help you create comprehensive campaigns ${brandInfo}. ${context ? "I have your brand strategy loaded and ready to use!" : "Tell me about your brand and campaign goals to get started."}`;
+      case "brief":
+        return `Ready to create detailed content briefs ${brandInfo}! I can help you plan individual content pieces with specific objectives, target audiences, and deliverables. ${context ? "I'll use your brand strategy to ensure consistency." : "Share your content goals to begin."}`;
+      case "post":
+        return `Let's create individual content posts ${brandInfo}! I can generate copy, suggest visuals, and optimize for your target audience. ${context ? "Your brand voice and visual style are loaded and ready." : "Tell me what type of content you need."}`;
+      case "series":
+        return `Perfect! I'll help you plan a content series ${brandInfo}. I can create multi-part campaigns with consistent messaging and progressive storytelling. ${context ? "Using your content pillars and brand guidelines." : "Describe your series concept to start."}`;
+      default:
+        return "Hi! How can I help you create content today?";
+    }
+  }
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -60,39 +87,74 @@ const CreateCampaign = () => {
   }, [messages]);
 
   const generateContent = async (userMessage: string): Promise<GeneratedAsset[]> => {
-    // Simulate AI content generation
+    // Simulate AI content generation with strategy context
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     const assets: GeneratedAsset[] = [];
+    const context = isStrategyComplete ? getAIContext() : null;
     
-    // Determine what type of content to generate based on user input
+    // Generate content based on active tab and user input
+    switch (activeTab) {
+      case "campaign":
+        if (userMessage.toLowerCase().includes("full campaign") || userMessage.toLowerCase().includes("complete")) {
+          assets.push({
+            id: crypto.randomUUID(),
+            type: "campaign",
+            title: "Complete Campaign Strategy",
+            content: `Campaign Overview:\n${context?.brand ? `Brand: ${context.brand.name}\n` : ""}Objective: Drive brand awareness and engagement\nTarget Audience: ${context?.audience?.name || "Primary target group"}\nDuration: 4 weeks\n\nContent Pillars:\n${context?.contentPillars?.map(p => `• ${p.name}: ${p.description}`).join('\n') || "• Educational content\n• Behind-the-scenes\n• Product highlights"}`,
+            metadata: { type: "strategy", duration: "4 weeks" }
+          });
+        }
+        break;
+        
+      case "brief":
+        assets.push({
+          id: crypto.randomUUID(),
+          type: "brief",
+          title: "Content Brief",
+          content: `Content Brief\n\nObjective: ${userMessage}\nTarget Audience: ${context?.audience?.name || "Primary audience"}\nBrand Voice: ${context?.brand?.tone || "Professional and engaging"}\nKey Message: [Generated based on brand values]\nDeliverables: \n• Primary content piece\n• Social media posts\n• Visual assets\nSuccess Metrics: Engagement rate, reach, conversions`,
+          metadata: { type: "brief", status: "draft" }
+        });
+        break;
+        
+      case "post":
+        if (userMessage.toLowerCase().includes("copy") || userMessage.toLowerCase().includes("text")) {
+          const brandValues = context?.brand?.values?.join(", ") || "innovation, quality, trust";
+          assets.push({
+            id: crypto.randomUUID(),
+            type: "text",
+            title: "Social Media Copy",
+            content: `🚀 ${context?.brand?.name ? `At ${context.brand.name}, we believe in ` : "We believe in "}${brandValues}.\n\n${context?.brand?.tagline || "Transform your experience with us."}\n\n#${context?.brand?.name?.replace(/\s+/g, '') || "Brand"} #Innovation #Quality`,
+            metadata: { platform: "social", tone: context?.brand?.tone || "professional" }
+          });
+        }
+        break;
+        
+      case "series":
+        assets.push({
+          id: crypto.randomUUID(),
+          type: "calendar",
+          title: "Content Series Plan",
+          content: `Content Series: "${userMessage}"\n\nWeek 1: Introduction & Problem\nWeek 2: Solution Deep Dive\nWeek 3: Success Stories\nWeek 4: Call to Action\n\nContent Types:\n• Blog posts\n• Social media\n• Email campaigns\n• Visual content`,
+          metadata: { type: "series", duration: "4 weeks" }
+        });
+        break;
+    }
+    
+    // Universal content types
     if (userMessage.toLowerCase().includes("image") || userMessage.toLowerCase().includes("visual")) {
+      const brandColors = context?.brand?.colors?.[0] || "#3B82F6";
       assets.push({
         id: crypto.randomUUID(),
         type: "image",
-        title: "Campaign Hero Image",
+        title: "Brand Visual",
         content: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop",
-        metadata: { dimensions: "800x600", format: "JPG" }
-      });
-    }
-    
-    if (userMessage.toLowerCase().includes("copy") || userMessage.toLowerCase().includes("text") || userMessage.toLowerCase().includes("description")) {
-      assets.push({
-        id: crypto.randomUUID(),
-        type: "text",
-        title: "Campaign Copy",
-        content: "Transform your business with our innovative solution. Join thousands of satisfied customers who have already experienced the difference. Limited time offer - act now!",
-        metadata: { wordCount: 28, tone: "professional" }
-      });
-    }
-    
-    if (userMessage.toLowerCase().includes("schedule") || userMessage.toLowerCase().includes("calendar") || userMessage.toLowerCase().includes("plan")) {
-      assets.push({
-        id: crypto.randomUUID(),
-        type: "calendar",
-        title: "Campaign Schedule",
-        content: "Week 1: Launch announcement\nWeek 2: Feature highlights\nWeek 3: Customer testimonials\nWeek 4: Final call to action",
-        metadata: { duration: "4 weeks", platforms: ["Instagram", "Facebook", "Email"] }
+        metadata: { 
+          dimensions: "800x600", 
+          format: "JPG",
+          brandColors: context?.brand?.colors || ["#3B82F6"],
+          style: context?.brand?.visualStyle?.description || "modern and professional"
+        }
       });
     }
     
@@ -163,8 +225,21 @@ const CreateCampaign = () => {
       case "image": return Image;
       case "text": return FileText;
       case "calendar": return Calendar;
+      case "brief": return PenTool;
+      case "campaign": return Target;
       default: return FileText;
     }
+  };
+
+  const handleTabChange = (value: string) => {
+    const newTab = value as CreationType;
+    setActiveTab(newTab);
+    setMessages([{
+      id: crypto.randomUUID(),
+      content: getWelcomeMessage(newTab),
+      sender: "bot",
+      timestamp: new Date()
+    }]);
   };
 
   const saveAsset = (asset: GeneratedAsset) => {
@@ -172,6 +247,71 @@ const CreateCampaign = () => {
     console.log("Saving asset:", asset);
     // For now, just show a success message
     alert(`${asset.title} saved successfully!`);
+  };
+
+  const getQuickStartExamples = () => {
+    const context = isStrategyComplete ? getAIContext() : null;
+    const brandName = context?.brand?.name || "my brand";
+    
+    switch (activeTab) {
+      case "campaign":
+        return [
+          `Create a complete product launch campaign for ${brandName}`,
+          `Design a holiday marketing campaign`,
+          `Plan a brand awareness campaign with visuals and copy`,
+        ];
+      case "brief":
+        return [
+          `Create a content brief for our new product announcement`,
+          `Plan a thought leadership blog post series`,
+          `Brief for social media engagement campaign`,
+        ];
+      case "post":
+        return [
+          `Write an Instagram post about our latest feature`,
+          `Create LinkedIn thought leadership content`,
+          `Generate copy for a promotional email`,
+        ];
+      case "series":
+        return [
+          `Plan a 4-week educational content series`,
+          `Create a product tutorial series`,
+          `Design a customer success story series`,
+        ];
+      default:
+        return [];
+    }
+  };
+
+  const getCapabilities = () => {
+    switch (activeTab) {
+      case "campaign":
+        return [
+          { icon: Target, color: "text-blue-500", title: "Full Campaign Strategy", description: "Complete planning with goals, audience, timeline" },
+          { icon: Image, color: "text-green-500", title: "Visual Assets", description: "Hero images, social media graphics, banners" },
+          { icon: Calendar, color: "text-purple-500", title: "Content Calendar", description: "Scheduled posting timeline and content plan" },
+        ];
+      case "brief":
+        return [
+          { icon: PenTool, color: "text-blue-500", title: "Detailed Briefs", description: "Comprehensive content specifications" },
+          { icon: Target, color: "text-green-500", title: "Clear Objectives", description: "Defined goals and success metrics" },
+          { icon: FileText, color: "text-purple-500", title: "Deliverables List", description: "Specific content requirements and formats" },
+        ];
+      case "post":
+        return [
+          { icon: FileText, color: "text-blue-500", title: "Platform Copy", description: "Optimized text for each social platform" },
+          { icon: Image, color: "text-green-500", title: "Visual Suggestions", description: "Image concepts and style recommendations" },
+          { icon: Zap, color: "text-purple-500", title: "Instant Generation", description: "Quick content creation for immediate use" },
+        ];
+      case "series":
+        return [
+          { icon: Calendar, color: "text-blue-500", title: "Multi-Part Planning", description: "Connected content with progressive narrative" },
+          { icon: Target, color: "text-green-500", title: "Consistent Messaging", description: "Unified brand voice across all content" },
+          { icon: Sparkles, color: "text-purple-500", title: "Cross-Platform", description: "Adapted content for multiple channels" },
+        ];
+      default:
+        return [];
+    }
   };
 
   return (
@@ -194,20 +334,44 @@ const CreateCampaign = () => {
           <div className="flex items-center space-x-3 mb-2">
             <Sparkles className="w-8 h-8 text-primary" />
             <h1 className="text-2xl lg:text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-              Create Campaign
+              AI Content Creator
             </h1>
           </div>
-          <p className="text-muted-foreground">Chat with AI to generate your campaign content, images, and schedule</p>
+          <p className="text-muted-foreground">Create campaigns, briefs, posts, and content series with AI {isStrategyComplete && "using your brand strategy"}</p>
         </div>
 
-        {/* Campaign Name Input */}
+        {/* Content Type Tabs */}
+        <Card className="p-4 mb-6 bg-gradient-glass backdrop-blur-xl border-border/10">
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="campaign" className="flex items-center gap-2">
+                <Target className="w-4 h-4" />
+                Campaign
+              </TabsTrigger>
+              <TabsTrigger value="brief" className="flex items-center gap-2">
+                <PenTool className="w-4 h-4" />
+                Brief
+              </TabsTrigger>
+              <TabsTrigger value="post" className="flex items-center gap-2">
+                <FileText className="w-4 h-4" />
+                Post
+              </TabsTrigger>
+              <TabsTrigger value="series" className="flex items-center gap-2">
+                <Calendar className="w-4 h-4" />
+                Series
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </Card>
+
+        {/* Project Name Input */}
         <Card className="p-4 mb-6 bg-gradient-glass backdrop-blur-xl border-border/10">
           <div className="flex items-center space-x-4">
-            <label className="text-sm font-medium whitespace-nowrap">Campaign Name:</label>
+            <label className="text-sm font-medium whitespace-nowrap">Project Name:</label>
             <Input
-              value={campaignName}
-              onChange={(e) => setCampaignName(e.target.value)}
-              placeholder="Enter your campaign name..."
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+              placeholder={`Enter your ${activeTab} name...`}
               className="flex-1"
             />
           </div>
@@ -364,59 +528,51 @@ const CreateCampaign = () => {
             <Card className="p-4 bg-gradient-glass backdrop-blur-xl border-border/10">
               <h3 className="font-semibold mb-3">Quick Start Examples</h3>
               <div className="space-y-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full justify-start text-left"
-                  onClick={() => setInputValue("Create a hero image for a tech product launch")}
-                >
-                  "Create a hero image for a tech product"
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full justify-start text-left"
-                  onClick={() => setInputValue("Write compelling copy for a spring sale campaign")}
-                >
-                  "Write copy for a spring sale"
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full justify-start text-left"
-                  onClick={() => setInputValue("Plan a 4-week social media campaign schedule")}
-                >
-                  "Plan a 4-week social campaign"
-                </Button>
+                {getQuickStartExamples().map((example, index) => (
+                  <Button 
+                    key={index}
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full justify-start text-left"
+                    onClick={() => setInputValue(example)}
+                  >
+                    "{example}"
+                  </Button>
+                ))}
               </div>
             </Card>
 
             <Card className="p-4 bg-gradient-glass backdrop-blur-xl border-border/10">
-              <h3 className="font-semibold mb-3">What I Can Generate</h3>
+              <h3 className="font-semibold mb-3">AI Capabilities</h3>
               <div className="space-y-3">
-                <div className="flex items-center space-x-3">
-                  <Image className="w-5 h-5 text-blue-500" />
-                  <div>
-                    <p className="font-medium text-sm">Visual Content</p>
-                    <p className="text-xs text-muted-foreground">Hero images, social posts, banners</p>
+                {getCapabilities().map((capability, index) => (
+                  <div key={index} className="flex items-center space-x-3">
+                    <capability.icon className={`w-5 h-5 ${capability.color}`} />
+                    <div>
+                      <p className="font-medium text-sm">{capability.title}</p>
+                      <p className="text-xs text-muted-foreground">{capability.description}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <FileText className="w-5 h-5 text-green-500" />
-                  <div>
-                    <p className="font-medium text-sm">Written Content</p>
-                    <p className="text-xs text-muted-foreground">Copy, headlines, descriptions</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Calendar className="w-5 h-5 text-purple-500" />
-                  <div>
-                    <p className="font-medium text-sm">Campaign Schedule</p>
-                    <p className="text-xs text-muted-foreground">Timeline, posting schedule</p>
-                  </div>
-                </div>
+                ))}
               </div>
             </Card>
+            
+            {isStrategyComplete && (
+              <Card className="p-4 bg-gradient-glass backdrop-blur-xl border-border/10">
+                <div className="flex items-center space-x-2 mb-3">
+                  <Zap className="w-4 h-4 text-green-500" />
+                  <h3 className="font-semibold text-green-500">Strategy Loaded</h3>
+                </div>
+                <p className="text-xs text-muted-foreground mb-2">
+                  Your brand strategy is active and will be used to create consistent, on-brand content.
+                </p>
+                <div className="space-y-1 text-xs">
+                  <p><span className="font-medium">Brand:</span> {getAIContext().brand?.name}</p>
+                  <p><span className="font-medium">Tone:</span> {getAIContext().brand?.tone}</p>
+                  <p><span className="font-medium">Audience:</span> {getAIContext().audience?.name}</p>
+                </div>
+              </Card>
+            )}
           </div>
         </div>
       </div>
