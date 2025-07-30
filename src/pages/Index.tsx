@@ -102,18 +102,75 @@ const Index = () => {
     </Card>
   );
 
-  console.log("About to render Index JSX");
   return (
-    <div className="min-h-screen bg-white">
-      <div className="p-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">
-          Welcome to MarketingHub - Test
-        </h1>
-        <p className="text-gray-600">
-          This is a test to see if the basic rendering works.
-        </p>
-        <div className="mt-6 p-4 bg-gray-100 rounded-lg">
-          <p className="text-gray-800">Strategy complete: {isStrategyComplete ? 'Yes' : 'No'}</p>
+    <div className="min-h-screen bg-background">
+      <DashboardHeader />
+      
+      <div className="container mx-auto px-6 py-8">
+        {/* Progress Overview */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-3xl font-bold text-foreground">Content Marketing Hub</h1>
+            <Badge variant="outline" className="text-sm">
+              {overallProgress}% Complete
+            </Badge>
+          </div>
+          <div className="w-full bg-muted rounded-full h-2">
+            <div 
+              className="bg-primary h-2 rounded-full transition-all duration-300" 
+              style={{ width: `${overallProgress}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Getting Started Steps */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-semibold text-foreground mb-6">Getting Started</h2>
+          <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-3">
+            <StepCard
+              step={1}
+              title="Define Strategy"
+              description="Set up your brand DNA, content pillars, and target audiences to create a comprehensive content strategy."
+              icon={Target}
+              status={getStepStatus(1)}
+              action={isStrategyComplete ? "Review Strategy" : "Start Strategy"}
+              link="/strategy"
+            />
+            
+            <StepCard
+              step={2}
+              title="Plan Content"
+              description="Create detailed content briefs and plan your content calendar based on your strategy."
+              icon={FileText}
+              status={getStepStatus(2)}
+              action="Plan Content"
+              link="/planning"
+            />
+            
+            <StepCard
+              step={3}
+              title="Create & Publish"
+              description="Use AI-powered tools to create engaging content and manage your publishing schedule."
+              icon={Sparkles}
+              status={getStepStatus(3)}
+              action="Create Content"
+              link="/editor"
+            />
+          </div>
+        </div>
+
+        {/* Dashboard Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <div className="lg:col-span-2">
+            <KPICards />
+            <div className="mt-6">
+              <ContentCalendar />
+            </div>
+          </div>
+          <div className="space-y-6">
+            <ChatAgent />
+            <ContentManager />
+          </div>
         </div>
       </div>
     </div>
