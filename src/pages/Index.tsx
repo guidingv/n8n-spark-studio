@@ -264,64 +264,6 @@ const Index = () => {
             <ContentManager />
           </div>
         </div>
-
-        {/* Quick Actions Grid */}
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold text-foreground mb-6">Quick Actions</h2>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-              <CardContent className="p-6 text-center">
-                <div className="p-3 rounded-full bg-primary/10 text-primary w-fit mx-auto mb-3">
-                  <Target className="h-6 w-6" />
-                </div>
-                <h3 className="font-semibold mb-2">Strategy Planning</h3>
-                <p className="text-sm text-muted-foreground mb-4">Define content strategy and pillars</p>
-                <Button asChild variant="outline" size="sm" className="w-full">
-                  <Link to="/strategy">Start Planning</Link>
-                </Button>
-              </CardContent>
-            </Card>
-            
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-              <CardContent className="p-6 text-center">
-                <div className="p-3 rounded-full bg-primary/10 text-primary w-fit mx-auto mb-3">
-                  <Calendar className="h-6 w-6" />
-                </div>
-                <h3 className="font-semibold mb-2">Content Calendar</h3>
-                <p className="text-sm text-muted-foreground mb-4">Schedule and organize content</p>
-                <Button asChild variant="outline" size="sm" className="w-full">
-                  <Link to="/calendar">View Calendar</Link>
-                </Button>
-              </CardContent>
-            </Card>
-            
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-              <CardContent className="p-6 text-center">
-                <div className="p-3 rounded-full bg-primary/10 text-primary w-fit mx-auto mb-3">
-                  <FileText className="h-6 w-6" />
-                </div>
-                <h3 className="font-semibold mb-2">Content Briefs</h3>
-                <p className="text-sm text-muted-foreground mb-4">Create detailed content plans</p>
-                <Button asChild variant="outline" size="sm" className="w-full">
-                  <Link to="/planning">Create Brief</Link>
-                </Button>
-              </CardContent>
-            </Card>
-            
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-              <CardContent className="p-6 text-center">
-                <div className="p-3 rounded-full bg-primary/10 text-primary w-fit mx-auto mb-3">
-                  <BarChart3 className="h-6 w-6" />
-                </div>
-                <h3 className="font-semibold mb-2">Analytics</h3>
-                <p className="text-sm text-muted-foreground mb-4">Track content performance</p>
-                <Button variant="outline" size="sm" className="w-full" disabled>
-                  Coming Soon
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
       </div>
     </div>
   );
