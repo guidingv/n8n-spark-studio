@@ -20,7 +20,10 @@ import {
   Lightbulb,
   Tag,
   Download,
-  Copy
+  Copy,
+  Upload,
+  Image,
+  X
 } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { useToast } from "@/hooks/use-toast";
@@ -40,6 +43,12 @@ interface BrandDnaProfile {
       base: string[];
       primary_accents: string[];
     };
+    referenceImages: {
+      id: string;
+      name: string;
+      url: string;
+      description: string;
+    }[];
   };
 }
 
@@ -92,7 +101,8 @@ const StrategyPlanning = () => {
       colorPalette: {
         base: ["Parchment Cream #F5F1E9", "Clean White #FFFFFF"],
         primary_accents: ["Amber Brown #994A00", "Golden Sun #F2C34E", "Charcoal Black #2C2C2C"]
-      }
+      },
+      referenceImages: []
     }
   });
 
@@ -264,6 +274,60 @@ const StrategyPlanning = () => {
           ...prev.visualStyle.colorPalette,
           [type]: prev.visualStyle.colorPalette[type].map((color, i) => i === index ? value : color)
         }
+      }
+    }));
+  };
+
+  // Reference Images Management
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files) return;
+
+    Array.from(files).forEach(file => {
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const newImage = {
+            id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+            name: file.name,
+            url: e.target?.result as string,
+            description: ""
+          };
+          
+          setBrandDnaProfile(prev => ({
+            ...prev,
+            visualStyle: {
+              ...prev.visualStyle,
+              referenceImages: [...prev.visualStyle.referenceImages, newImage]
+            }
+          }));
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+    
+    // Reset input
+    event.target.value = '';
+  };
+
+  const removeReferenceImage = (imageId: string) => {
+    setBrandDnaProfile(prev => ({
+      ...prev,
+      visualStyle: {
+        ...prev.visualStyle,
+        referenceImages: prev.visualStyle.referenceImages.filter(img => img.id !== imageId)
+      }
+    }));
+  };
+
+  const updateImageDescription = (imageId: string, description: string) => {
+    setBrandDnaProfile(prev => ({
+      ...prev,
+      visualStyle: {
+        ...prev.visualStyle,
+        referenceImages: prev.visualStyle.referenceImages.map(img => 
+          img.id === imageId ? { ...img, description } : img
+        )
       }
     }));
   };
@@ -658,10 +722,76 @@ const StrategyPlanning = () => {
                       </div>
                     </div>
                   </div>
+                  
+                  {/* Reference Images Section */}
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <Label>Reference Images</Label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={handleImageUpload}
+                          className="hidden"
+                          id="image-upload"
+                        />
+                        <Button 
+                          onClick={() => document.getElementById('image-upload')?.click()}
+                          size="sm" 
+                          variant="outline"
+                        >
+                          <Upload className="w-4 h-4 mr-2" />
+                          Upload Images
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    {brandDnaProfile.visualStyle.referenceImages.length > 0 ? (
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {brandDnaProfile.visualStyle.referenceImages.map((image) => (
+                          <div key={image.id} className="group relative">
+                            <div className="aspect-square overflow-hidden rounded-lg border bg-muted">
+                              <img
+                                src={image.url}
+                                alt={image.name}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => removeReferenceImage(image.id)}
+                                className="h-8 w-8 p-0"
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                            <div className="mt-2">
+                              <p className="text-xs font-medium truncate">{image.name}</p>
+                              <Textarea
+                                value={image.description}
+                                onChange={(e) => updateImageDescription(image.id, e.target.value)}
+                                placeholder="Describe this reference image..."
+                                className="mt-1 min-h-[60px] text-xs"
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 border-2 border-dashed border-muted-foreground/25 rounded-lg">
+                        <Image className="w-12 h-12 mx-auto text-muted-foreground/50 mb-3" />
+                        <p className="text-sm text-muted-foreground mb-2">No reference images uploaded yet</p>
+                        <p className="text-xs text-muted-foreground">Upload images that represent your desired visual style and brand aesthetic</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 
                 <p className="text-sm text-muted-foreground">
-                  This visual style guide will ensure consistent branding across all content assets.
+                  This visual style guide and reference images will ensure consistent branding across all content assets.
                 </p>
               </div>
             </Card>
