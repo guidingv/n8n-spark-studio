@@ -15,7 +15,10 @@ import {
   Trash2,
   Palette,
   Mic,
-  Eye
+  Eye,
+  Users,
+  Lightbulb,
+  Tag
 } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { useToast } from "@/hooks/use-toast";
@@ -36,6 +39,30 @@ interface BrandDnaProfile {
       primary_accents: string[];
     };
   };
+}
+
+interface ContentPillar {
+  id: string;
+  name: string;
+  description: string;
+  color: string;
+}
+
+interface TargetAudience {
+  id: string;
+  name: string;
+  demographics: string;
+  psychographics: string;
+  painPoints: string[];
+  goals: string[];
+}
+
+interface ContentCategory {
+  id: string;
+  name: string;
+  description: string;
+  pillarId: string;
+  contentTypes: string[];
 }
 
 const StrategyPlanning = () => {
@@ -67,12 +94,47 @@ const StrategyPlanning = () => {
     }
   });
 
+  // Additional strategy components
+  const [contentPillars, setContentPillars] = useState<ContentPillar[]>([
+    { id: "1", name: "Thought Leadership", description: "Establish expertise in health and wellness", color: "blue" },
+    { id: "2", name: "Product Education", description: "Showcase features and benefits", color: "green" },
+    { id: "3", name: "Customer Success", description: "Highlight real results and testimonials", color: "purple" }
+  ]);
+
+  const [targetAudiences, setTargetAudiences] = useState<TargetAudience[]>([
+    {
+      id: "1",
+      name: "Health-Conscious Professionals",
+      demographics: "Ages 28-45, Working professionals with disposable income",
+      psychographics: "Wellness-focused, efficiency-driven, quality-conscious",
+      painPoints: ["Time constraints", "Information overload", "Quality concerns"],
+      goals: ["Optimize health", "Save time", "Trusted recommendations"]
+    }
+  ]);
+
+  const [contentCategories, setContentCategories] = useState<ContentCategory[]>([
+    {
+      id: "1",
+      name: "Educational Guides",
+      description: "In-depth wellness education and how-to content",
+      pillarId: "2",
+      contentTypes: ["Blog posts", "Video tutorials", "Infographics"]
+    }
+  ]);
+
   const handleSave = () => {
-    // Here you would typically save to your backend/database
-    console.log("Brand DNA Profile:", JSON.stringify(brandDnaProfile, null, 2));
+    // Combine all strategy data for comprehensive context
+    const completeStrategy = {
+      brandDnaProfile,
+      contentPillars,
+      targetAudiences,
+      contentCategories
+    };
+    
+    console.log("Complete Strategy Profile:", JSON.stringify(completeStrategy, null, 2));
     toast({
-      title: "Brand DNA Profile Saved",
-      description: "Your brand DNA profile has been successfully saved and will guide all content creation.",
+      title: "Complete Strategy Saved",
+      description: "Your comprehensive content strategy has been saved and will guide all content creation.",
     });
   };
 
@@ -175,6 +237,93 @@ const StrategyPlanning = () => {
     }));
   };
 
+  // Content Pillars Management
+  const addContentPillar = () => {
+    const newPillar: ContentPillar = {
+      id: Date.now().toString(),
+      name: "New Content Pillar",
+      description: "Describe this content pillar",
+      color: "gray"
+    };
+    setContentPillars([...contentPillars, newPillar]);
+  };
+
+  const deleteContentPillar = (id: string) => {
+    setContentPillars(contentPillars.filter(p => p.id !== id));
+  };
+
+  // Target Audience Management
+  const addTargetAudience = () => {
+    const newAudience: TargetAudience = {
+      id: Date.now().toString(),
+      name: "New Audience Segment",
+      demographics: "",
+      psychographics: "",
+      painPoints: [],
+      goals: []
+    };
+    setTargetAudiences([...targetAudiences, newAudience]);
+  };
+
+  const deleteTargetAudience = (id: string) => {
+    setTargetAudiences(targetAudiences.filter(a => a.id !== id));
+  };
+
+  const addPainPoint = (audienceId: string, painPoint: string) => {
+    if (!painPoint.trim()) return;
+    setTargetAudiences(targetAudiences.map(a => 
+      a.id === audienceId ? {...a, painPoints: [...a.painPoints, painPoint]} : a
+    ));
+  };
+
+  const removePainPoint = (audienceId: string, index: number) => {
+    setTargetAudiences(targetAudiences.map(a => 
+      a.id === audienceId ? {...a, painPoints: a.painPoints.filter((_, i) => i !== index)} : a
+    ));
+  };
+
+  const addGoal = (audienceId: string, goal: string) => {
+    if (!goal.trim()) return;
+    setTargetAudiences(targetAudiences.map(a => 
+      a.id === audienceId ? {...a, goals: [...a.goals, goal]} : a
+    ));
+  };
+
+  const removeGoal = (audienceId: string, index: number) => {
+    setTargetAudiences(targetAudiences.map(a => 
+      a.id === audienceId ? {...a, goals: a.goals.filter((_, i) => i !== index)} : a
+    ));
+  };
+
+  // Content Categories Management
+  const addContentCategory = () => {
+    const newCategory: ContentCategory = {
+      id: Date.now().toString(),
+      name: "New Content Category",
+      description: "",
+      pillarId: contentPillars[0]?.id || "",
+      contentTypes: []
+    };
+    setContentCategories([...contentCategories, newCategory]);
+  };
+
+  const deleteContentCategory = (id: string) => {
+    setContentCategories(contentCategories.filter(c => c.id !== id));
+  };
+
+  const addContentType = (categoryId: string, contentType: string) => {
+    if (!contentType.trim()) return;
+    setContentCategories(contentCategories.map(c => 
+      c.id === categoryId ? {...c, contentTypes: [...c.contentTypes, contentType]} : c
+    ));
+  };
+
+  const removeContentType = (categoryId: string, index: number) => {
+    setContentCategories(contentCategories.map(c => 
+      c.id === categoryId ? {...c, contentTypes: c.contentTypes.filter((_, i) => i !== index)} : c
+    ));
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       <DashboardHeader />
@@ -196,23 +345,26 @@ const StrategyPlanning = () => {
             <div className="flex items-center space-x-3 mb-2">
               <Target className="w-8 h-8 text-primary" />
               <h1 className="text-2xl lg:text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                Brand DNA Profile
+                Content Strategy Hub
               </h1>
             </div>
-            <p className="text-muted-foreground">Define your brand's core identity that will guide all content creation</p>
+            <p className="text-muted-foreground">Define your comprehensive content strategy that will guide all content creation</p>
           </div>
           <Button onClick={handleSave} className="flex items-center gap-2">
             <Save className="w-4 h-4" />
-            Save Profile
+            Save Strategy
           </Button>
         </div>
 
         {/* Strategy Tabs */}
         <Tabs defaultValue="brand" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="brand">Brand Identity</TabsTrigger>
             <TabsTrigger value="voice">Voice & Tone</TabsTrigger>
             <TabsTrigger value="visual">Visual Style</TabsTrigger>
+            <TabsTrigger value="pillars">Content Pillars</TabsTrigger>
+            <TabsTrigger value="audience">Target Audience</TabsTrigger>
+            <TabsTrigger value="categories">Content Categories</TabsTrigger>
           </TabsList>
 
           {/* Brand Identity Tab */}
@@ -471,6 +623,293 @@ const StrategyPlanning = () => {
                 </p>
               </div>
             </Card>
+          </TabsContent>
+
+          {/* Content Pillars Tab */}
+          <TabsContent value="pillars" className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Lightbulb className="w-5 h-5 text-primary" />
+                <h3 className="text-lg font-semibold">Content Pillars</h3>
+              </div>
+              <Button onClick={addContentPillar} size="sm">
+                <Plus className="w-4 h-4 mr-2" />
+                Add Pillar
+              </Button>
+            </div>
+            
+            <div className="grid gap-4">
+              {contentPillars.map((pillar) => (
+                <Card key={pillar.id} className="p-4 bg-gradient-glass backdrop-blur-xl border-border/10">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-3 h-3 rounded-full bg-${pillar.color}-500`} />
+                        <Input
+                          value={pillar.name}
+                          onChange={(e) => {
+                            setContentPillars(contentPillars.map(p => 
+                              p.id === pillar.id ? {...p, name: e.target.value} : p
+                            ));
+                          }}
+                          className="font-medium border-none bg-transparent p-0 h-auto"
+                        />
+                      </div>
+                      <Textarea
+                        value={pillar.description}
+                        onChange={(e) => {
+                          setContentPillars(contentPillars.map(p => 
+                            p.id === pillar.id ? {...p, description: e.target.value} : p
+                          ));
+                        }}
+                        placeholder="Describe this content pillar..."
+                        className="border-none bg-transparent p-0 min-h-[60px] resize-none"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => deleteContentPillar(pillar.id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* Target Audience Tab */}
+          <TabsContent value="audience" className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-primary" />
+                <h3 className="text-lg font-semibold">Target Audiences</h3>
+              </div>
+              <Button onClick={addTargetAudience} size="sm">
+                <Plus className="w-4 h-4 mr-2" />
+                Add Audience
+              </Button>
+            </div>
+            
+            <div className="grid gap-4">
+              {targetAudiences.map((audience) => (
+                <Card key={audience.id} className="p-4 bg-gradient-glass backdrop-blur-xl border-border/10">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Input
+                        value={audience.name}
+                        onChange={(e) => {
+                          setTargetAudiences(targetAudiences.map(a => 
+                            a.id === audience.id ? {...a, name: e.target.value} : a
+                          ));
+                        }}
+                        className="font-medium text-lg border-none bg-transparent p-0 h-auto"
+                      />
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => deleteTargetAudience(audience.id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <Label>Demographics</Label>
+                        <Textarea
+                          value={audience.demographics}
+                          onChange={(e) => {
+                            setTargetAudiences(targetAudiences.map(a => 
+                              a.id === audience.id ? {...a, demographics: e.target.value} : a
+                            ));
+                          }}
+                          placeholder="Age, location, job title, income level..."
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <Label>Psychographics</Label>
+                        <Textarea
+                          value={audience.psychographics}
+                          onChange={(e) => {
+                            setTargetAudiences(targetAudiences.map(a => 
+                              a.id === audience.id ? {...a, psychographics: e.target.value} : a
+                            ));
+                          }}
+                          placeholder="Values, interests, behaviors, motivations..."
+                          className="mt-1"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <Label>Pain Points</Label>
+                        <div className="flex flex-wrap gap-2 mt-2 mb-2">
+                          {audience.painPoints.map((point, index) => (
+                            <Badge key={index} variant="outline" className="text-xs">
+                              {point}
+                              <button 
+                                onClick={() => removePainPoint(audience.id, index)}
+                                className="ml-1 hover:bg-destructive hover:text-destructive-foreground rounded-full w-3 h-3 flex items-center justify-center"
+                              >
+                                ×
+                              </button>
+                            </Badge>
+                          ))}
+                        </div>
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="Add pain point..."
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter') {
+                                addPainPoint(audience.id, e.currentTarget.value);
+                                e.currentTarget.value = '';
+                              }
+                            }}
+                            className="text-sm"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label>Goals</Label>
+                        <div className="flex flex-wrap gap-2 mt-2 mb-2">
+                          {audience.goals.map((goal, index) => (
+                            <Badge key={index} variant="outline" className="text-xs">
+                              {goal}
+                              <button 
+                                onClick={() => removeGoal(audience.id, index)}
+                                className="ml-1 hover:bg-destructive hover:text-destructive-foreground rounded-full w-3 h-3 flex items-center justify-center"
+                              >
+                                ×
+                              </button>
+                            </Badge>
+                          ))}
+                        </div>
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="Add goal..."
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter') {
+                                addGoal(audience.id, e.currentTarget.value);
+                                e.currentTarget.value = '';
+                              }
+                            }}
+                            className="text-sm"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* Content Categories Tab */}
+          <TabsContent value="categories" className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Tag className="w-5 h-5 text-primary" />
+                <h3 className="text-lg font-semibold">Content Categories</h3>
+              </div>
+              <Button onClick={addContentCategory} size="sm">
+                <Plus className="w-4 h-4 mr-2" />
+                Add Category
+              </Button>
+            </div>
+            
+            <div className="grid gap-4">
+              {contentCategories.map((category) => (
+                <Card key={category.id} className="p-4 bg-gradient-glass backdrop-blur-xl border-border/10">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Input
+                        value={category.name}
+                        onChange={(e) => {
+                          setContentCategories(contentCategories.map(c => 
+                            c.id === category.id ? {...c, name: e.target.value} : c
+                          ));
+                        }}
+                        className="font-medium text-lg border-none bg-transparent p-0 h-auto"
+                      />
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => deleteContentCategory(category.id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <Label>Description</Label>
+                        <Textarea
+                          value={category.description}
+                          onChange={(e) => {
+                            setContentCategories(contentCategories.map(c => 
+                              c.id === category.id ? {...c, description: e.target.value} : c
+                            ));
+                          }}
+                          placeholder="Describe this content category..."
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <Label>Related Content Pillar</Label>
+                        <select 
+                          value={category.pillarId}
+                          onChange={(e) => {
+                            setContentCategories(contentCategories.map(c => 
+                              c.id === category.id ? {...c, pillarId: e.target.value} : c
+                            ));
+                          }}
+                          className="w-full mt-1 p-2 border rounded-md bg-background"
+                        >
+                          {contentPillars.map(pillar => (
+                            <option key={pillar.id} value={pillar.id}>{pillar.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <Label>Content Types</Label>
+                      <div className="flex flex-wrap gap-2 mt-2 mb-2">
+                        {category.contentTypes.map((type, index) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {type}
+                            <button 
+                              onClick={() => removeContentType(category.id, index)}
+                              className="ml-1 hover:bg-destructive hover:text-destructive-foreground rounded-full w-3 h-3 flex items-center justify-center"
+                            >
+                              ×
+                            </button>
+                          </Badge>
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Add content type..."
+                          onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                              addContentType(category.id, e.currentTarget.value);
+                              e.currentTarget.value = '';
+                            }
+                          }}
+                          className="text-sm"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
           </TabsContent>
         </Tabs>
       </div>
