@@ -107,19 +107,14 @@ const Index = () => {
       <DashboardHeader />
       
       <div className="container mx-auto px-6 py-8">
-        {/* Progress Overview */}
+        {/* Header with New Project Button */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-3xl font-bold text-foreground">Content Marketing Hub</h1>
-            <Badge variant="outline" className="text-sm">
-              {overallProgress}% Complete
-            </Badge>
-          </div>
-          <div className="w-full bg-muted rounded-full h-2">
-            <div 
-              className="bg-primary h-2 rounded-full transition-all duration-300" 
-              style={{ width: `${overallProgress}%` }}
-            />
+            <Button className="gap-2">
+              <Sparkles className="h-4 w-4" />
+              New Project
+            </Button>
           </div>
         </div>
 
