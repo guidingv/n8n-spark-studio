@@ -234,7 +234,7 @@ const ContentPlanning = () => {
                             <ChevronDown className="w-3 h-3 ml-1" />
                           </Badge>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-background/95 backdrop-blur-xl border-border/20" align="end">
+                        <DropdownMenuContent className="z-50 bg-popover border shadow-md" align="end">
                           {statusOptions.map((option) => (
                             <DropdownMenuItem
                               key={option.value}
