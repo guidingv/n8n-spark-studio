@@ -2,14 +2,13 @@ import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { KPICards } from "@/components/dashboard/KPICards";
 import { ContentCalendar } from "@/components/dashboard/ContentCalendar";
 import { ChatAgent } from "@/components/dashboard/ChatAgent";
-import { ContentManager } from "@/components/dashboard/ContentManager";
 import { ProjectHeader } from "@/components/ProjectHeader";
 import { useStrategyContext } from "@/contexts/StrategyContext";
 import { useProject } from "@/contexts/ProjectContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Circle, ArrowRight, Target, FileText, Sparkles, BarChart3, Users, Calendar, Edit3 } from "lucide-react";
+import { CheckCircle, Circle, ArrowRight, Target, FileText, Sparkles, BarChart3, Users, Calendar, Edit3, FolderOpen } from "lucide-react";
 import { Link, Navigate } from "react-router-dom";
 
 const Index = () => {
@@ -202,6 +201,19 @@ const Index = () => {
                   </div>
                   <Badge variant="secondary" className="text-xs">Create</Badge>
                 </Link>
+                
+                <Link to="/asset-hub" className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="p-1.5 rounded-full bg-primary/10 text-primary">
+                      <FolderOpen className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">Asset Library</p>
+                      <p className="text-xs text-muted-foreground">Manage content assets</p>
+                    </div>
+                  </div>
+                  <Badge variant="secondary" className="text-xs">Browse</Badge>
+                </Link>
               </CardContent>
             </Card>
           </div>
@@ -258,10 +270,9 @@ const Index = () => {
             </Card>
           </div>
 
-          {/* AI Assistant & Tools */}
-          <div className="lg:col-span-2 space-y-6">
+          {/* AI Assistant */}
+          <div className="lg:col-span-2">
             <ChatAgent />
-            <ContentManager />
           </div>
         </div>
       </div>
