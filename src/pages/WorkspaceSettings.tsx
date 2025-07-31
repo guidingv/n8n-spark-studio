@@ -82,6 +82,32 @@ const WorkspaceSettings = () => {
         </div>
 
         <div className="grid gap-6">
+          {/* Strategy Planning */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Strategy Planning
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4">
+                Configure your content strategy, brand DNA, and target audiences for this workspace.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" onClick={() => navigate('/strategy-planning')}>
+                  Brand DNA & Strategy
+                </Button>
+                <Button variant="outline" onClick={() => navigate('/content-planning')}>
+                  Content Planning
+                </Button>
+                <Button variant="outline" onClick={() => navigate('/content-brief')}>
+                  Content Brief
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Brand Voices */}
           <Card>
             <CardHeader>
