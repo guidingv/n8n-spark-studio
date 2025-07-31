@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./components/theme-provider";
 import { ProjectProvider } from "./contexts/ProjectContext";
 import { StrategyProvider } from "./contexts/StrategyContext";
+import { GlobalSettingsProvider } from "./contexts/GlobalSettingsContext";
 import Index from "./pages/Index";
 import ContentCalendar from "./pages/ContentCalendar";
 import ContentPlanning from "./pages/ContentPlanning";
@@ -16,6 +17,8 @@ import AssetHub from "./pages/AssetHub";
 import CreateCampaign from "./pages/CreateCampaign";
 import ContentEditor from "./pages/ContentEditor";
 import ProjectSelector from "./components/ProjectSelector";
+import GlobalSettings from "./pages/GlobalSettings";
+import WorkspaceSettings from "./pages/WorkspaceSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,7 +30,8 @@ function App() {
       <ThemeProvider defaultTheme="dark" storageKey="ui-theme">
         <ProjectProvider>
           <StrategyProvider>
-            <TooltipProvider>
+            <GlobalSettingsProvider>
+              <TooltipProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
@@ -41,13 +45,16 @@ function App() {
               <Route path="/assets" element={<AssetHub />} />
               <Route path="/create" element={<CreateCampaign />} />
               <Route path="/editor/:id?" element={<ContentEditor />} />
+              <Route path="/global-settings" element={<GlobalSettings />} />
+              <Route path="/workspace-settings/:workspaceId" element={<WorkspaceSettings />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
             </BrowserRouter>
-          </TooltipProvider>
-        </StrategyProvider>
-      </ProjectProvider>
+              </TooltipProvider>
+            </GlobalSettingsProvider>
+          </StrategyProvider>
+        </ProjectProvider>
     </ThemeProvider>
     </QueryClientProvider>
   );

@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useProject } from "@/contexts/ProjectContext";
-import { Target, FileText, Calendar, Users, Settings, ArrowLeft } from "lucide-react";
+import { Target, FileText, Calendar, Users, Settings, ArrowLeft, Globe } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export function ProjectHeader() {
@@ -70,9 +70,17 @@ export function ProjectHeader() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" className="gap-2">
-              <Settings className="h-4 w-4" />
-              Settings
+            <Button asChild variant="outline" size="sm" className="gap-2">
+              <Link to="/global-settings">
+                <Globe className="h-4 w-4" />
+                Global Settings
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="sm" className="gap-2">
+              <Link to={`/workspace-settings/${currentProject.id}`}>
+                <Settings className="h-4 w-4" />
+                Workspace Settings
+              </Link>
             </Button>
           </div>
         </div>

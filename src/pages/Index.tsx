@@ -8,7 +8,7 @@ import { useProject } from "@/contexts/ProjectContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Circle, ArrowRight, Target, FileText, Sparkles, BarChart3, Users, Calendar, Edit3, FolderOpen } from "lucide-react";
+import { CheckCircle, Circle, ArrowRight, Target, FileText, Sparkles, BarChart3, Users, Calendar, Edit3, FolderOpen, Settings } from "lucide-react";
 import { Link, Navigate } from "react-router-dom";
 
 const Index = () => {
@@ -119,6 +119,12 @@ const Index = () => {
               <p className="text-muted-foreground mt-1">{currentProject.description}</p>
             </div>
             <div className="flex gap-3">
+              <Button asChild variant="outline" className="gap-2">
+                <Link to={`/workspace-settings/${currentProject.id}`}>
+                  <Settings className="h-4 w-4" />
+                  Workspace Settings
+                </Link>
+              </Button>
               <Button asChild className="gap-2">
                 <Link to="/editor">
                   <Edit3 className="h-4 w-4" />
