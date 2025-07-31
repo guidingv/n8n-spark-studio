@@ -95,13 +95,13 @@ const WorkspaceSettings = () => {
                 Configure your content strategy, brand DNA, and target audiences for this workspace.
               </p>
               <div className="flex flex-wrap gap-2">
-                <Button variant="outline" onClick={() => navigate('/strategy-planning')}>
+                <Button variant="outline" onClick={() => navigate('/strategy')}>
                   Brand DNA & Strategy
                 </Button>
-                <Button variant="outline" onClick={() => navigate('/content-planning')}>
+                <Button variant="outline" onClick={() => navigate('/planning')}>
                   Content Planning
                 </Button>
-                <Button variant="outline" onClick={() => navigate('/content-brief')}>
+                <Button variant="outline" onClick={() => navigate('/planning/1')}>
                   Content Brief
                 </Button>
               </div>
