@@ -108,7 +108,7 @@ export const ChatAgent = () => {
               <p className="text-sm text-foreground">{chat.message}</p>
               <span className="text-xs text-muted-foreground">{chat.timestamp}</span>
             </div>
-            <div className="bg-gradient-to-br from-white/5 to-white/[0.02] border border-border/20 rounded-lg p-3">
+            <div className="bg-secondary/50 border border-border/20 rounded-lg p-3">
               <p className="text-sm text-foreground">{chat.response}</p>
               {chat.hasCreateSuggestion && (
                 <Button 
