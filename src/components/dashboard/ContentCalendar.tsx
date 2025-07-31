@@ -54,7 +54,7 @@ export const ContentCalendar = () => {
   const navigate = useNavigate();
 
   return (
-    <Card className="p-6 bg-gradient-glass backdrop-blur-xl border-border/10">
+    <Card className="p-6 bg-gradient-glass backdrop-blur-xl border-border/10 h-full">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
           <Calendar className="w-6 h-6 text-n8n-primary" />
