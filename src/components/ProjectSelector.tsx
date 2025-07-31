@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useProject, Project } from "@/contexts/ProjectContext";
-import { Plus, ChevronRight, Target, FileText, Calendar, Users } from "lucide-react";
+import { Plus, Target, FileText, Calendar, Users, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const ProjectSelector = () => {
@@ -62,15 +62,15 @@ const ProjectSelector = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Select Project</h1>
-            <p className="text-muted-foreground mt-2">Choose a project to work on or create a new one</p>
+            <h1 className="text-3xl font-bold text-foreground">Content Workspaces</h1>
+            <p className="text-muted-foreground mt-2">Manage your content projects and collaborate with your team</p>
           </div>
           
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
               <Button className="gap-2">
                 <Plus className="h-4 w-4" />
-                New Project
+                New Workspace
               </Button>
             </DialogTrigger>
             <DialogContent>
@@ -137,6 +137,17 @@ const ProjectSelector = () => {
           </Dialog>
         </div>
 
+        {/* Search Bar */}
+        <div className="mb-8">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input 
+              placeholder="Search workspaces..." 
+              className="pl-10 bg-card border-border/20"
+            />
+          </div>
+        </div>
+
         {/* Projects Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => {
@@ -146,77 +157,65 @@ const ProjectSelector = () => {
             return (
               <Card 
                 key={project.id} 
-                className={`hover:shadow-lg transition-all cursor-pointer ${
-                  isCurrentProject ? 'ring-2 ring-primary bg-primary/5' : ''
-                }`}
+                className="bg-card border-border/20 hover:shadow-lg transition-all cursor-pointer"
                 onClick={() => {
                   setCurrentProject(project);
                 }}
               >
-                <CardHeader className="pb-4">
-                  <div className="flex items-start justify-between">
+                <CardContent className="p-6">
+                  {/* Header with colored dot and title */}
+                  <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-full bg-primary/10 text-primary">
-                        <TypeIcon className="h-5 w-5" />
-                      </div>
-                      <div className="flex-1">
-                        <CardTitle className="text-lg leading-6">{project.name}</CardTitle>
-                        <div className="flex items-center gap-2 mt-2">
-                          <Badge variant="outline" className="text-xs capitalize">
-                            {project.type.replace('-', ' ')}
-                          </Badge>
-                          <div className="flex items-center gap-1">
-                            <div className={`w-2 h-2 rounded-full ${getStatusColor(project.status)}`} />
-                            <span className="text-xs text-muted-foreground capitalize">{project.status}</span>
-                          </div>
-                        </div>
-                      </div>
+                      <div className={`w-3 h-3 rounded-full ${getStatusColor(project.status)}`} />
+                      <h3 className="text-lg font-semibold text-foreground">{project.name}</h3>
                     </div>
-                    {isCurrentProject && (
-                      <Badge className="text-xs">Current</Badge>
-                    )}
                   </div>
-                </CardHeader>
-                
-                <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                  
+                  {/* Description */}
+                  <p className="text-sm text-muted-foreground mb-6 line-clamp-2">
                     {project.description}
                   </p>
                   
-                  {/* Progress Bar */}
-                  <div className="mb-4">
-                    <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                      <span>Progress</span>
-                      <span>{project.progress}%</span>
-                    </div>
-                    <div className="w-full bg-muted rounded-full h-2">
-                      <div 
-                        className="bg-primary h-2 rounded-full transition-all duration-300" 
-                        style={{ width: `${project.progress}%` }}
-                      />
-                    </div>
+                  {/* Status and timestamp */}
+                  <div className="flex items-center justify-between mb-4">
+                    <Badge 
+                      variant={project.status === 'active' ? 'default' : 'secondary'} 
+                      className={`text-xs capitalize ${
+                        project.status === 'active' 
+                          ? 'bg-green-500/20 text-green-400 border-green-500/20' 
+                          : project.status === 'paused'
+                          ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/20'
+                          : 'bg-blue-500/20 text-blue-400 border-blue-500/20'
+                      }`}
+                    >
+                      {project.status}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">
+                      Updated {new Date(project.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
                   
-                  {/* Project Details */}
-                  <div className="space-y-2 text-xs text-muted-foreground mb-4">
-                    <div className="flex justify-between">
-                      <span>Created</span>
-                      <span>{new Date(project.createdAt).toLocaleDateString()}</span>
-                    </div>
-                    {project.deadline && (
-                      <div className="flex justify-between">
-                        <span>Deadline</span>
-                        <span>{new Date(project.deadline).toLocaleDateString()}</span>
+                  {/* Bottom stats and open button */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <Users className="h-3 w-3" />
+                        <span>4</span>
                       </div>
-                    )}
+                      <div className="flex items-center gap-1">
+                        <FileText className="h-3 w-3" />
+                        <span>12</span>
+                      </div>
+                    </div>
+                    <Button 
+                      asChild 
+                      variant="outline" 
+                      size="sm"
+                      className="border-border/20 hover:bg-accent"
+                    >
+                      <Link to="/">Open</Link>
+                    </Button>
                   </div>
-                  
-                  <Button asChild className="w-full gap-2">
-                    <Link to="/">
-                      Enter Project
-                      <ChevronRight className="h-4 w-4" />
-                    </Link>
-                  </Button>
                 </CardContent>
               </Card>
             );
