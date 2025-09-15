@@ -34,9 +34,9 @@ export function ProjectHeader() {
   return (
     <Card className="border-b rounded-none bg-card/50 backdrop-blur-sm">
       <CardContent className="p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button asChild variant="ghost" size="sm" className="gap-2">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 order-2 lg:order-1">
+            <Button asChild variant="ghost" size="sm" className="gap-2 w-fit">
               <Link to="/projects">
                 <ArrowLeft className="h-4 w-4" />
                 All Projects
@@ -49,7 +49,7 @@ export function ProjectHeader() {
               </div>
               <div>
                 <h2 className="font-semibold text-lg">{currentProject.name}</h2>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <Badge 
                     variant="secondary" 
                     className={`text-xs capitalize ${getStatusColor(currentProject.status)}`}
@@ -69,14 +69,14 @@ export function ProjectHeader() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <Button asChild variant="outline" size="sm" className="gap-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 order-1 lg:order-2">
+            <Button asChild variant="outline" size="sm" className="gap-2 justify-center">
               <Link to="/global-settings">
                 <Globe className="h-4 w-4" />
                 Global Settings
               </Link>
             </Button>
-            <Button asChild variant="outline" size="sm" className="gap-2">
+            <Button asChild variant="outline" size="sm" className="gap-2 justify-center">
               <Link to={`/workspace-settings/${currentProject.id}`}>
                 <Settings className="h-4 w-4" />
                 Workspace Settings
